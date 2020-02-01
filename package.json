@@ -1,0 +1,22 @@
+{
+  "name": "dmhy-notifier",
+  "version": "0.1.0",
+  "scripts": {
+    "start": ""
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kin021360/dmhy-notifier"
+  },
+  "author": "Nathan Lam",
+  "license": "MIT",
+  "dependencies": {
+    "level-ttl": "^3.1.1",
+    "leveldown": "^5.4.1",
+    "levelup": "^4.3.2",
+    "log4js": "^6.1.0",
+    "moment": "^2.24.0",
+    "node-telegram-bot-api": "^0.40.0",
+    "rss-parser": "^3.7.3"
+  }
+}
