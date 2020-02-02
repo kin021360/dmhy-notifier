@@ -8,11 +8,11 @@ class LeveldbAdapter {
     }
 
     setKV(key, value, ttl) {
-        return this.db.put(key, value, {ttl});
+        return this.db.put(key.toString(), value, {ttl});
     }
 
     getV(key) {
-        return this.db.get(key).then(v => v.toString()).catch(() => null);
+        return this.db.get(key.toString()).then(v => v.toString()).catch(() => null);
     }
 
     scanKV(limit = -1) {

@@ -37,8 +37,8 @@ function genMD5(str) {
 
 function isToday(oldDate) {
     const now8 = new Date();
-    now8.setUTCHours(now8.getUTCHours() + 8);
     const old8 = new Date(oldDate);
+    now8.setUTCHours(now8.getUTCHours() + 8);
     old8.setUTCHours(old8.getUTCHours() + 8);
     return now8.getUTCDate() === old8.getUTCDate();
 }
@@ -70,7 +70,7 @@ async function checkUserFetchedList(user, fetchedList) {
 
 dmhyTgBot.addCommand(/\/subs ([^;]+)(?:;([^;]+)?)?/, async (tgMessage) => {
     let user = null;
-    const record = await userdb.getV(tgMessage.chatId.toString());
+    const record = await userdb.getV(tgMessage.chatId);
     const preferredFansub = tgMessage.matchedTexts.length > 2 && tgMessage.matchedTexts[2] === '@' ? fansubList : tgMessage.matchedTexts[2];
     if (record) {
         user = User.deserialize(record);
@@ -78,12 +78,12 @@ dmhyTgBot.addCommand(/\/subs ([^;]+)(?:;([^;]+)?)?/, async (tgMessage) => {
     } else {
         user = new User(tgMessage.chatId).addSubscribe(new Subscribe(tgMessage.matchedText, preferredFansub));
     }
-    await userdb.setKV(tgMessage.chatId.toString(), user.serialize());
+    await userdb.setKV(tgMessage.chatId, user.serialize());
     dmhyTgBot.sendMessage(tgMessage.chatId, 'Done!');
 });
 
 dmhyTgBot.addCommand(/\/listsubs$/, async (tgMessage) => {
-    const record = await userdb.getV(tgMessage.chatId.toString());
+    const record = await userdb.getV(tgMessage.chatId);
     if (record) {
         // const user = User.deserialize(record);
         dmhyTgBot.sendMessage(tgMessage.chatId, record);
@@ -93,7 +93,7 @@ dmhyTgBot.addCommand(/\/listsubs$/, async (tgMessage) => {
 });
 
 dmhyTgBot.addCommand(/\/list$/, async (tgMessage) => {
-    const record = await userdb.getV(tgMessage.chatId.toString());
+    const record = await userdb.getV(tgMessage.chatId);
     if (record) {
         let msg = '';
         const user = User.deserialize(record);
@@ -110,11 +110,11 @@ dmhyTgBot.addCommand(/\/list$/, async (tgMessage) => {
 });
 
 dmhyTgBot.addCommand(/\/delsubs (.+)/, async (tgMessage) => {
-    const record = await userdb.getV(tgMessage.chatId.toString());
+    const record = await userdb.getV(tgMessage.chatId);
     if (record) {
         const user = User.deserialize(record);
         user.deleteSubscribe(tgMessage.matchedText);
-        await userdb.setKV(tgMessage.chatId.toString(), user.serialize());
+        await userdb.setKV(tgMessage.chatId, user.serialize());
         dmhyTgBot.sendMessage(tgMessage.chatId, 'done!');
     } else {
         dmhyTgBot.sendMessage(tgMessage.chatId, 'No record!');
@@ -123,19 +123,21 @@ dmhyTgBot.addCommand(/\/delsubs (.+)/, async (tgMessage) => {
 
 dmhyTgBot.addCommand(/\/check$/, async (tgMessage) => {
     const fetchedList = await cache.get();
-
-    const record = await userdb.getV(tgMessage.chatId.toString());
+    const record = await userdb.getV(tgMessage.chatId);
     const user = User.deserialize(record);
+
     let titles = await checkUserFetchedList(user, fetchedList);
     if (!titles) titles = 'No update!';
     dmhyTgBot.sendMessage(user.chatId, titles);
 });
 
 
+// Setup schedule to check new updates for every 2 hours
 setInterval(async () => {
     logger.info('Schedule triggered');
     const fetchedList = await cache.get();
     const recordSet = await userdb.scanKV();
+
     for (const record of recordSet) {
         const user = User.deserialize(record.value);
         let titles = await checkUserFetchedList(user, fetchedList);
