@@ -44,15 +44,20 @@ function isToday(oldDate) {
 }
 
 async function fetchDmhy() {
-    const list = await parser.parseURL('https://share.dmhy.org/topics/rss/rss.xml')
-        .then(feed => feed.items.filter(i => isToday(i.isoDate)));
-    logger.info('Fetched & today items: ' + list.length);
-    // console.log(list);
-    return list;
+    try {
+        const feed = await parser.parseURL('https://share.dmhy.org/topics/rss/rss.xml');
+        const list = feed.items.filter(i => isToday(i.isoDate));
+        logger.info('Fetched & today items: ' + list.length);
+        return list;
+    } catch (e) {
+        logger.error(e);
+        return null;
+    }
 }
 
 async function checkUserFetchedList(user, fetchedList) {
     let titles = '';
+    if (!fetchedList) return titles;
     for (const subscribe of user.subscribeList) {
         const satisfiedItems = subscribe.checkSatisfiedItems(fetchedList);
         for (const satisfiedItem of satisfiedItems) {
