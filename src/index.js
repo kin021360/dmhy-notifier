@@ -35,12 +35,16 @@ function genMD5(str) {
     return crypto.createHash('md5').update(str).digest('hex');
 }
 
-function isToday(oldDate) {
+function isToday(oldDate, offsetCheckBack = 3) {
     const now8 = new Date();
     const old8 = new Date(oldDate);
     now8.setUTCHours(now8.getUTCHours() + 8);
     old8.setUTCHours(old8.getUTCHours() + 8);
-    return now8.getUTCDate() === old8.getUTCDate();
+    if (now8.getUTCDate() === old8.getUTCDate()) {
+        return true;
+    }
+    now8.setUTCHours(now8.getUTCHours() - offsetCheckBack);
+    return old8 > now8;
 }
 
 async function fetchDmhy() {
