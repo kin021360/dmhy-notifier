@@ -69,7 +69,7 @@ async function checkUserFetchedList(user, fetchedList) {
             const exist = await cachedb.getV(cacheKey);
             if (!exist) {
                 await cachedb.setKV(cacheKey, true, 86400000);
-                titles += satisfiedItem.title + '\n' + satisfiedItem.link + '\n';
+                titles += `${satisfiedItem.title} - ${satisfiedItem.pubDate.substring(5, 25)}\n${satisfiedItem.link}\n`;
             }
         }
     }
