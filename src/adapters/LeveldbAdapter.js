@@ -18,16 +18,42 @@ class LeveldbAdapter {
     scanKV(limit = -1) {
         return new Promise((resolve, reject) => {
             const allKeyValue = [];
-            this.db.createReadStream({limit})
-                .on('data', (data) => {
-                    allKeyValue.push({key: data.key.toString(), value: data.value.toString()});
-                })
+            const readStream = this.db.createReadStream({limit});
+            readStream.on('data', data => allKeyValue.push({key: data.key.toString(), value: data.value.toString()}))
                 .on('error', reject)
-                // .on('close', () => {
-                //     console.log('Stream closed')
-                // })
-                .on('end', () => resolve(allKeyValue));
+                .on('end', () => resolve(allKeyValue))
+                .on('close', () => {
+                    readStream.removeAllListeners('data');
+                    readStream.removeAllListeners('error');
+                    readStream.removeAllListeners('end');
+                    readStream.removeAllListeners('close');
+                });
         });
+    }
+
+    async scanKV2(limit = -1) {
+        const allKeyValue = [];
+        const iterator = this.db.iterator({limit});
+        const iteratorNext = () => new Promise((resolve, reject) => {
+            iterator.next((error, key, value) => {
+                if (error) return reject(error);
+                if (key === undefined && value === undefined) return resolve(null);
+                resolve({key: key.toString(), value: value.toString()});
+            });
+        });
+
+        try {
+            let kv = await iteratorNext();
+            while (kv) {
+                allKeyValue.push(kv);
+                kv = await iteratorNext();
+            }
+            return allKeyValue;
+        } catch (e) {
+            throw e;
+        } finally {
+            iterator.end(() => {});
+        }
     }
 }
 
