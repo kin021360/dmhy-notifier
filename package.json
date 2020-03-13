@@ -2,7 +2,7 @@
   "name": "dmhy-notifier",
   "version": "0.1.0",
   "scripts": {
-    "start": "node ./src/index.js"
+    "start": "node --expose-gc ./src/index.js"
   },
   "repository": {
     "type": "git",

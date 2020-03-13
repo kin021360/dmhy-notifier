@@ -27,6 +27,7 @@ class LeveldbAdapter {
                     readStream.removeAllListeners('error');
                     readStream.removeAllListeners('end');
                     readStream.removeAllListeners('close');
+                    readStream.destroy();
                 });
         });
     }

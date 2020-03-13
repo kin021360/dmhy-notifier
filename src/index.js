@@ -159,4 +159,5 @@ setInterval(async () => {
     const nextTime = new Date();
     nextTime.setTime(nextTime.getTime() + 7200000);
     logger.info('Next schedule at ' + nextTime.toString());
+    global.gc && global.gc();
 }, 7200000);
