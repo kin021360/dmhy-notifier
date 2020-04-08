@@ -120,9 +120,10 @@ dmhyTgBot.addCommand(/\/list$/, async (tgMessage) => {
 
 dmhyTgBot.addCommand(/\/delsubs (.+)/, async (tgMessage) => {
     const record = await userdb.getV(tgMessage.chatId);
-    if (record) {
+    const ids = tgMessage.matchedText.split(',');
+    if (record && ids.length > 0) {
         const user = User.deserialize(record);
-        user.deleteSubscribe(tgMessage.matchedText);
+        ids.forEach(id => id && user.deleteSubscribe(id));
         await userdb.setKV(tgMessage.chatId, user.serialize());
         dmhyTgBot.sendMessage(tgMessage.chatId, 'done!');
     } else {
@@ -138,6 +139,21 @@ dmhyTgBot.addCommand(/\/check$/, async (tgMessage) => {
     let titles = await checkUserFetchedList(user, fetchedList);
     if (!titles) titles = 'No update!';
     dmhyTgBot.sendMessage(user.chatId, titles);
+});
+
+dmhyTgBot.addCommand(/.+/, async (tgMessage) => {
+    const msg = `
+    Available commands:
+    /subs xxx
+    /subs xxx,yyy
+    /subs xxx;@
+    /subs xxx;fansubKeywords
+    /check
+    /list
+    /delsubs id1,id2
+    /listsubs
+    `;
+    dmhyTgBot.sendMessage(tgMessage.chatId, msg);
 });
 
 

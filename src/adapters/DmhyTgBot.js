@@ -16,7 +16,10 @@ class TgMessage {
 class DmhyTgBot {
     constructor(token) {
         this.token = token;
-        this.bot = new TelegramBot(token, {polling: true});
+        this.bot = new TelegramBot(token, {
+            polling: true,
+            onlyFirstMatch: true
+        });
         // this.initBot();
     }
 

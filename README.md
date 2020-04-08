@@ -67,7 +67,7 @@ Check update immediately
 
 Delete the subscribe by id (use `/list` to find the id first)
 ```
-/delsubs id
+/delsubs id1,id2
 ```
 
 List your subscribed list (RAW mode)
