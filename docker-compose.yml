@@ -1,0 +1,11 @@
+version: '2.2'
+services:
+  dmhy-notifier-docker:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    # volumes:
+    #     - /:/home/dmhy-notifier/leveldb
+    environment:
+      - NODE_ENV=production
+    restart: always
