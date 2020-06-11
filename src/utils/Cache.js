@@ -1,13 +1,14 @@
 const log4js = require('log4js');
 const logger = log4js.getLogger('Cache.js');
 
-module.exports = function (func, cacheTime) {
+module.exports = function (func, cacheTime, executorTimeoutMs = 70000) {
     if (typeof func !== "function" || isNaN(Number(cacheTime))) {
         throw new Error("Invalid construct values!");
     }
 
     const updateFunc = func;
     const ttl = cacheTime;
+    const executorTimeout = executorTimeoutMs;
     let lastUpdateTime = null;
     let cacheObject = null;
     let lockedTime = null;
@@ -50,7 +51,7 @@ module.exports = function (func, cacheTime) {
         if (!lock()) return;
         try {
             logger.info('Locked!');
-            const timeout = timer(20000);
+            const timeout = timer(executorTimeout);
             const executor = updateExecutor(startTime);
             const result = await Promise.race([timeout, executor]);
             if (result !== 'timeout') {
