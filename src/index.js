@@ -159,21 +159,25 @@ dmhyTgBot.addCommand(/.+/, async (tgMessage) => {
 
 // Setup schedule to check new updates for every 2 hours
 setInterval(async () => {
-    logger.info('Schedule triggered');
-    const fetchedList = await cache.get();
-    const recordSet = await userdb.scanKV();
+    try {
+        logger.info('Schedule triggered');
+        const fetchedList = await cache.get();
+        const recordSet = await userdb.scanKV();
 
-    for (const record of recordSet) {
-        const user = User.deserialize(record.value);
-        let titles = await checkUserFetchedList(user, fetchedList);
-        if (titles) {
-            dmhyTgBot.sendMessage(user.chatId, titles);
-        } else {
-            // dmhyTgBot.sendMessage(user.chatId, 'No update!');
+        for (const record of recordSet) {
+            const user = User.deserialize(record.value);
+            let titles = await checkUserFetchedList(user, fetchedList);
+            if (titles) {
+                dmhyTgBot.sendMessage(user.chatId, titles);
+            } else {
+                // dmhyTgBot.sendMessage(user.chatId, 'No update!');
+            }
         }
+        const nextTime = new Date();
+        nextTime.setTime(nextTime.getTime() + 7200000);
+        logger.info('Next schedule at ' + nextTime.toString());
+        global.gc && global.gc();
+    } catch (e) {
+        logger.error(e);
     }
-    const nextTime = new Date();
-    nextTime.setTime(nextTime.getTime() + 7200000);
-    logger.info('Next schedule at ' + nextTime.toString());
-    global.gc && global.gc();
 }, 7200000);

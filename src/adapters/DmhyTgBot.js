@@ -46,14 +46,18 @@ class DmhyTgBot {
     // }
 
     addCommand(regex, func) {
-        this.bot.onText(regex, (msg, match) => {
-            logger.info(`Received command: "${msg.text}"; Chat id: ${msg.chat.id}`);
-            func(new TgMessage(msg, match[1], match));
+        this.bot.onText(regex, async (msg, match) => {
+            try {
+                logger.info(`Received command: "${msg.text}"; Chat id: ${msg.chat.id}`);
+                func(new TgMessage(msg, match[1], match));
+            } catch (e) {
+                logger.error(e);
+            }
         });
     }
 
-    sendMessage(chatId, msg = '') {
-        this.bot.sendMessage(chatId, msg);
+    sendMessage(chatId, msg = '', option) {
+        this.bot.sendMessage(chatId, msg, option);
     }
 }
 
