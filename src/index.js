@@ -1,12 +1,10 @@
+'use strict';
 const crypto = require('crypto');
 const fs = require("fs");
 const util = require('util');
-const Parser = require('rss-parser');
-const parser = new Parser();
 const log4js = require('log4js');
 fs.readFile = util.promisify(fs.readFile);
 fs.writeFile = util.promisify(fs.writeFile);
-parser.parseURL = util.promisify(parser.parseURL);
 log4js.configure({
     appenders: {
         console: {type: 'console'}
@@ -24,11 +22,13 @@ const DmhyTgBot = require('./adapters/DmhyTgBot');
 const LeveldbAdapter = require('./adapters/LeveldbAdapter');
 const Cache = require('./utils/Cache');
 
+const dmhyRssService = new (require('./services/DmhyRssService'));
+const moeRssService = new (require('./services/MoeRssService'));
 const cachedb = new LeveldbAdapter(cachedbPath);
 const userdb = new LeveldbAdapter(userdbPath);
 const dmhyTgBot = new DmhyTgBot(tgBotToken);
 const logger = log4js.getLogger('index.js');
-const cache = new Cache(fetchDmhy, 900000);
+const cache = new Cache(fetchAllServices, 900000);
 
 
 function genMD5(str) {
@@ -47,10 +47,19 @@ function isToday(oldDate, offsetCheckBack = 3) {
     return old8 > now8;
 }
 
-async function fetchDmhy() {
+async function fetchAllServices() {
     try {
-        const feed = await parser.parseURL('https://share.dmhy.org/topics/rss/rss.xml');
-        const list = feed.items.filter(i => isToday(i.isoDate));
+        const [feed1, feed2] = await Promise.all([moeRssService.fetch({limit: 100}), dmhyRssService.fetch()]);
+        const allItems = feed1.reduce((current, item) => {
+            const find = current.find(i => i.title === item.title);
+            if (find) {
+                find.link.push(item.link[0]);
+            } else {
+                current.push(item);
+            }
+            return current;
+        }, feed2);
+        const list = allItems.filter(i => isToday(i.isoDate));
         logger.info('Fetched & today items: ' + list.length);
         return list;
     } catch (e) {
@@ -69,7 +78,7 @@ async function checkUserFetchedList(user, fetchedList) {
             const exist = await cachedb.getV(cacheKey);
             if (!exist) {
                 await cachedb.setKV(cacheKey, true, 86400000);
-                titles += `${satisfiedItem.title} - ${satisfiedItem.pubDate.substring(5, 25)}\n${satisfiedItem.link}\n`;
+                titles += `${satisfiedItem.title} - ${satisfiedItem.pubDate.substring(5, 25)}\n${satisfiedItem.link.map(i => i.link + '\n')}`;
             }
         }
     }
@@ -134,11 +143,11 @@ dmhyTgBot.addCommand(/\/delsubs (.+)/, async (tgMessage) => {
 dmhyTgBot.addCommand(/\/check$/, async (tgMessage) => {
     const fetchedList = await cache.get();
     const record = await userdb.getV(tgMessage.chatId);
-    const user = User.deserialize(record);
+    const user = record && User.deserialize(record);
 
     let titles = await checkUserFetchedList(user, fetchedList);
-    if (!titles) titles = 'No update!';
-    dmhyTgBot.sendMessage(user.chatId, titles);
+    if (!user || !titles) titles = 'No update!';
+    dmhyTgBot.sendMessage(tgMessage.chatId, titles);
 });
 
 dmhyTgBot.addCommand(/.+/, async (tgMessage) => {
