@@ -1,5 +1,4 @@
 'use strict';
-const crypto = require('crypto');
 const fs = require("fs");
 const util = require('util');
 const log4js = require('log4js');
@@ -13,39 +12,22 @@ log4js.configure({
         default: {appenders: ['console'], level: 'info'},
     }
 });
+const logger = log4js.getLogger('index.js');
 
-const {tgBotToken, cachedbPath, userdbPath} = require('../config');
 const User = require('./datastructures/User');
-const Item = require('./datastructures/Item');
 const {Subscribe, fansubList} = require('./datastructures/Subscribe');
 const DmhyTgBot = require('./adapters/DmhyTgBot');
 const LeveldbAdapter = require('./adapters/LeveldbAdapter');
 const Cache = require('./utils/Cache');
+const {isToday, genMD5} = require('./utils/util');
 
-const dmhyRssService = new (require('./services/DmhyRssService'));
-const moeRssService = new (require('./services/MoeRssService'));
+const {tgBotToken, cachedbPath, userdbPath} = require('../config');
 const cachedb = new LeveldbAdapter(cachedbPath);
 const userdb = new LeveldbAdapter(userdbPath);
 const dmhyTgBot = new DmhyTgBot(tgBotToken);
-const logger = log4js.getLogger('index.js');
+const dmhyRssService = new (require('./services/DmhyRssService'));
+const moeRssService = new (require('./services/MoeRssService'));
 const cache = new Cache(fetchAllServices, 900000);
-
-
-function genMD5(str) {
-    return crypto.createHash('md5').update(str).digest('hex');
-}
-
-function isToday(oldDate, offsetCheckBack = 3) {
-    const now8 = new Date();
-    const old8 = new Date(oldDate);
-    now8.setUTCHours(now8.getUTCHours() + 8);
-    old8.setUTCHours(old8.getUTCHours() + 8);
-    if (now8.getUTCDate() === old8.getUTCDate()) {
-        return true;
-    }
-    now8.setUTCHours(now8.getUTCHours() - offsetCheckBack);
-    return old8 > now8;
-}
 
 async function fetchAllServices() {
     try {
@@ -103,7 +85,6 @@ dmhyTgBot.addCommand(/\/subs ([^;]+)(?:;([^;]+)?)?/, async (tgMessage) => {
 dmhyTgBot.addCommand(/\/listsubs$/, async (tgMessage) => {
     const record = await userdb.getV(tgMessage.chatId);
     if (record) {
-        // const user = User.deserialize(record);
         dmhyTgBot.sendMessage(tgMessage.chatId, record);
     } else {
         dmhyTgBot.sendMessage(tgMessage.chatId, 'No record!');

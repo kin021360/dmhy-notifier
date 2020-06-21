@@ -1,3 +1,5 @@
+const crypto = require('crypto');
+
 function isMatch(str, conditions) {
     str = str.toLowerCase();
     for (const condition of conditions) {
@@ -11,5 +13,19 @@ module.exports = {
     isBig5: (title) => {
         const conditions = ['big5', 'cht', '繁體', '繁体', '简繁', '繁简', '繁日', '日繁'];
         return isMatch(title, conditions);
+    },
+    isToday: (oldDate, offsetCheckBack = 3) => {
+        const now8 = new Date();
+        const old8 = new Date(oldDate);
+        now8.setUTCHours(now8.getUTCHours() + 8);
+        old8.setUTCHours(old8.getUTCHours() + 8);
+        if (now8.getUTCDate() === old8.getUTCDate()) {
+            return true;
+        }
+        now8.setUTCHours(now8.getUTCHours() - offsetCheckBack);
+        return old8 > now8;
+    },
+    genMD5: (str) => {
+        return crypto.createHash('md5').update(str).digest('hex');
     }
 };
