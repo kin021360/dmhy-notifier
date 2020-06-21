@@ -1,5 +1,5 @@
 const crypto = require('crypto');
-const stringUtil = require('../utils/stringUtil');
+const {isMatch, isBig5} = require('../utils/util');
 
 const fansubList = ['喵萌', '極影', '幻櫻', '豌豆', '千夏', '桜都', '悠哈璃羽', '动漫国', '動漫國', 'DHR'];
 
@@ -21,11 +21,11 @@ class Subscribe {
     }
 
     isSatisfy(title) {
-        return stringUtil.isMatch(title, this.searchName) && stringUtil.isBig5(title);
+        return isMatch(title, this.searchName) && isBig5(title);
     }
 
     isInPreferredFansub(title) {
-        return this.preferredFansub.length > 0 && stringUtil.isMatch(title, this.preferredFansub);
+        return this.preferredFansub.length > 0 && isMatch(title, this.preferredFansub);
     }
 
     checkSatisfiedItems(items) {
