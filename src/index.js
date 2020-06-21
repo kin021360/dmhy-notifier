@@ -74,7 +74,7 @@ async function checkUserFetchedList(user, fetchedList) {
     for (const subscribe of user.subscribeList) {
         const satisfiedItems = subscribe.checkSatisfiedItems(fetchedList);
         for (const satisfiedItem of satisfiedItems) {
-            const cacheKey = user.chatId + genMD5(satisfiedItem.link);
+            const cacheKey = user.chatId + genMD5(satisfiedItem.title);
             const exist = await cachedb.getV(cacheKey);
             if (!exist) {
                 await cachedb.setKV(cacheKey, true, 86400000);
