@@ -11,7 +11,7 @@ function isMatch(str, conditions) {
 module.exports = {
     isMatch: isMatch,
     isBig5: (title) => {
-        const conditions = ['big5', 'cht', '繁體', '繁体', '简繁', '繁简', '繁日', '日繁'];
+        const conditions = ['big5', 'cht', '繁體', '繁体', '简繁', '繁简', '繁日', '日繁', '繁中'];
         return isMatch(title, conditions);
     },
     isToday: (oldDate, offsetCheckBack = 3) => {
