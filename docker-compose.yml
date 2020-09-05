@@ -1,6 +1,6 @@
 version: '2.2'
 services:
-  dmhy-notifier-docker:
+  dmhy_notifier_docker:
     build:
       context: ./
       dockerfile: Dockerfile
