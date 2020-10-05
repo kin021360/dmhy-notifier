@@ -9,7 +9,7 @@ class DmhyRssService extends RssService {
         try {
             const res = await super.fetch(querystring);
             res.items.map((item) => {
-                item.link = [{source: 'Dmhy', link: item.link, magnet: item.enclosure.url}];
+                item.link = [{source: 'Dmhy', link: item.link.replace('http', 'https'), magnet: item.enclosure.url}];
             });
             return res.items;
         } catch (e) {
