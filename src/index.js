@@ -19,9 +19,10 @@ const {Subscribe, fansubList} = require('./datastructures/Subscribe');
 const DmhyTgBot = require('./adapters/DmhyTgBot');
 const LeveldbAdapter = require('./adapters/LeveldbAdapter');
 const Cache = require('./utils/Cache');
-const {isToday, genMD5} = require('./utils/util');
+const {isToday, genMD5, escapeForTgMarkdown} = require('./utils/util');
+const ZlibHelper = require('./utils/ZlibHelper');
 
-const {tgBotToken, cachedbPath, userdbPath} = require('../config');
+const {tgBotToken, cachedbPath, userdbPath, magnetHelperLink} = require('../config');
 const cachedb = new LeveldbAdapter(cachedbPath);
 const userdb = new LeveldbAdapter(userdbPath);
 const dmhyTgBot = new DmhyTgBot(tgBotToken);
@@ -60,7 +61,13 @@ async function checkUserFetchedList(user, fetchedList) {
             const exist = await cachedb.getV(cacheKey);
             if (!exist) {
                 await cachedb.setKV(cacheKey, true, 86400000);
-                titles += `${satisfiedItem.title} - ${satisfiedItem.pubDate.substring(5, 25)}\n${satisfiedItem.link.map(i => i.link + '\n')}`;
+                titles += `${escapeForTgMarkdown(satisfiedItem.title)} - *${satisfiedItem.pubDate.substring(5, 25)}*\n`;
+                titles += satisfiedItem.link.map((i) => {
+                    let str = `*${i.source}:*\n- ${escapeForTgMarkdown(i.link)}`;
+                    if (magnetHelperLink && i.magnet) str += `\n- [Magnet link](${magnetHelperLink}#${encodeURIComponent(ZlibHelper.zip(i.magnet.replace('magnet:?', '')))})`;
+                    return str;
+                }).join('\n');
+                titles += '\n';
             }
         }
     }
@@ -128,11 +135,11 @@ dmhyTgBot.addCommand(/\/check$/, async (tgMessage) => {
 
     let titles = await checkUserFetchedList(user, fetchedList);
     if (!user || !titles) titles = 'No update!';
-    dmhyTgBot.sendMessage(tgMessage.chatId, titles);
+    dmhyTgBot.sendMessage(tgMessage.chatId, titles, {parse_mode: 'Markdown'});
 });
 
 dmhyTgBot.addCommand(/.+/, async (tgMessage) => {
-    const msg = `
+    let msg = `
     Available commands:
     /subs xxx
     /subs xxx,yyy
@@ -158,7 +165,7 @@ setInterval(async () => {
             const user = User.deserialize(record.value);
             let titles = await checkUserFetchedList(user, fetchedList);
             if (titles) {
-                dmhyTgBot.sendMessage(user.chatId, titles);
+                dmhyTgBot.sendMessage(user.chatId, titles, {parse_mode: 'Markdown'});
             } else {
                 // dmhyTgBot.sendMessage(user.chatId, 'No update!');
             }

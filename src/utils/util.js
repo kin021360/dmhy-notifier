@@ -27,5 +27,11 @@ module.exports = {
     },
     genMD5: (str) => {
         return crypto.createHash('md5').update(str).digest('hex');
+    },
+    escapeForTgMarkdown: (str) => {
+        return str.replace(/_/g, '\\_')
+            .replace(/\*/g, '\\*')
+            .replace(/\[/g, '\\[')
+            .replace(/`/g, '\\`');
     }
 };
