@@ -19,7 +19,7 @@ const {Subscribe, fansubList} = require('./datastructures/Subscribe');
 const DmhyTgBot = require('./adapters/DmhyTgBot');
 const LeveldbAdapter = require('./adapters/LeveldbAdapter');
 const Cache = require('./utils/Cache');
-const {isToday, genMD5, escapeForTgMarkdown} = require('./utils/util');
+const {isToday, genMD5, escapeForTgMarkdown, reduceMagnetQuerystring} = require('./utils/util');
 const ZlibHelper = require('./utils/ZlibHelper');
 
 const {tgBotToken, cachedbPath, userdbPath, magnetHelperLink} = require('../config');
@@ -64,7 +64,10 @@ async function checkUserFetchedList(user, fetchedList) {
                 titles += `${escapeForTgMarkdown(satisfiedItem.title)} - *${satisfiedItem.pubDate.substring(5, 25)}*\n`;
                 titles += satisfiedItem.link.map((i) => {
                     let str = `*${i.source}:*\n- ${escapeForTgMarkdown(i.link)}`;
-                    if (magnetHelperLink && i.magnet) str += `\n- [Magnet link](${magnetHelperLink}#${encodeURIComponent(ZlibHelper.zip(i.magnet.replace('magnet:?', '')))})`;
+                    if (magnetHelperLink && i.magnet) {
+                        const shorterMagnet = reduceMagnetQuerystring(i.magnet);
+                        str += `\n- [Magnet link](${magnetHelperLink}#${encodeURIComponent(ZlibHelper.zip(shorterMagnet.replace('magnet:?', '')))})`;
+                    }
                     return str;
                 }).join('\n');
                 titles += '\n';

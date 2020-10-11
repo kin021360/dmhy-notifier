@@ -33,5 +33,12 @@ module.exports = {
             .replace(/\*/g, '\\*')
             .replace(/\[/g, '\\[')
             .replace(/`/g, '\\`');
+    },
+    reduceMagnetQuerystring: (magnet, maxQuerystring = 22) => {
+        const splited = magnet.split('&');
+        if (splited.length > maxQuerystring) {
+            return splited.slice(0, maxQuerystring).join('&');
+        }
+        return magnet;
     }
 };
