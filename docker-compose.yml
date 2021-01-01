@@ -4,10 +4,10 @@ services:
     build:
       context: ./
       dockerfile: Dockerfile
-    # volumes:
-    #     - /:/home/dmhy-notifier/leveldb
+#    volumes:
+#      - /:/home/dmhy-notifier/leveldb
     environment:
       - NODE_ENV=production
-      - tgBotToken=''
-      - magnetHelperLink=''
+      - tgBotToken=
+      - magnetHelperLink=
     restart: always
