@@ -8,4 +8,6 @@ services:
     #     - /:/home/dmhy-notifier/leveldb
     environment:
       - NODE_ENV=production
+      - tgBotToken=''
+      - magnetHelperLink=''
     restart: always
