@@ -4,10 +4,7 @@ MAINTAINER Nathan Lam
 WORKDIR /home/dmhy-notifier/
 
 # Copy project
-COPY ./src ./
-COPY ./config.js ./
-COPY ./package.json ./
-COPY ./package-lock.json ./
+COPY ./ ./
 
 # Update npm
 RUN npm install -g npm@latest
