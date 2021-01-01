@@ -61,7 +61,7 @@ async function checkUserFetchedList(user, fetchedList) {
             const exist = await cachedb.getV(cacheKey);
             if (!exist) {
                 await cachedb.setKV(cacheKey, true, 86400000);
-                titles += `${escapeForTgMarkdown(satisfiedItem.title)} - *${satisfiedItem.pubDate.substring(5, 25)}*\n`;
+                titles += `${escapeForTgMarkdown(satisfiedItem.title)} - *${satisfiedItem.pubDate}*\n`;
                 titles += satisfiedItem.link.map((i) => {
                     let str = `*${i.source}:*\n- ${escapeForTgMarkdown(i.link)}`;
                     if (magnetHelperLink && i.magnet) {
