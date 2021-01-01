@@ -11,7 +11,7 @@ class MoeRssService extends RssService {
             const res = await super.fetch(querystring);
             res.items.map((item) => {
                 item.link = [{source: 'Moe', link: item.link}];
-                item.pubDate = moment(item.pubDate, 'Asia/Hong_Kong').format('DD MMM YYYY HH:mm:ss');
+                item.pubDate = moment.tz(item.pubDate, 'Asia/Hong_Kong').format('DD MMM YYYY HH:mm:ss');
             });
             return res.items;
         } catch (e) {
