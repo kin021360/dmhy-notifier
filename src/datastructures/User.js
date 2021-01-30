@@ -1,4 +1,4 @@
-const {Subscribe} = require('./Subscribe');
+const Subscribe = require('./Subscribe');
 
 class User {
     constructor(chatId) {
