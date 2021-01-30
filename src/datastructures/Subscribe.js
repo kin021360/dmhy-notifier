@@ -1,9 +1,9 @@
 const crypto = require('crypto');
 const {isMatch, isBig5} = require('../utils/util');
 
-const fansubList = ['喵萌', '極影', '幻櫻', '豌豆', '千夏', '桜都', '悠哈璃羽', '动漫国', '動漫國', 'DHR'];
-
 class Subscribe {
+    static fansubList = ['喵萌', '極影', '幻櫻', '豌豆', '千夏', '桜都', '悠哈璃羽', '动漫国', '動漫國', 'DHR'];
+
     constructor(searchName, preferredFansub = []) {
         if (typeof searchName === 'string') searchName = searchName.split(',');
         this.searchName = searchName.map(s => s.toLowerCase());
@@ -45,5 +45,4 @@ class Subscribe {
     }
 }
 
-module.exports.Subscribe = Subscribe;
-module.exports.fansubList = fansubList;
+module.exports = Subscribe;

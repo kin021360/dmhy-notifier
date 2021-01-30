@@ -53,7 +53,8 @@ class LeveldbAdapter {
         } catch (e) {
             throw e;
         } finally {
-            iterator.end(() => {});
+            iterator.end(() => {
+            });
         }
     }
 }

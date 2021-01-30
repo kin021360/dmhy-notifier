@@ -1,4 +1,8 @@
 const crypto = require('crypto');
+const fs = require("fs");
+const util = require('util');
+fs.readFile = util.promisify(fs.readFile);
+fs.writeFile = util.promisify(fs.writeFile);
 
 function isMatch(str, conditions) {
     str = str.toLowerCase();
@@ -9,6 +13,7 @@ function isMatch(str, conditions) {
 }
 
 module.exports = {
+    fs,
     isMatch: isMatch,
     isBig5: (title) => {
         const conditions = ['big5', 'cht', '繁體', '繁体', '简繁', '繁简', '繁日', '日繁', '繁中'];

@@ -1,9 +1,5 @@
 'use strict';
-const fs = require("fs");
-const util = require('util');
 const log4js = require('log4js');
-fs.readFile = util.promisify(fs.readFile);
-fs.writeFile = util.promisify(fs.writeFile);
 log4js.configure({
     appenders: {
         console: {type: 'console'}
@@ -14,20 +10,18 @@ log4js.configure({
 });
 const logger = log4js.getLogger('index.js');
 
-const User = require('./datastructures/User');
-const {Subscribe, fansubList} = require('./datastructures/Subscribe');
-const DmhyTgBot = require('./adapters/DmhyTgBot');
-const LeveldbAdapter = require('./adapters/LeveldbAdapter');
-const Cache = require('./utils/Cache');
+const {DmhyTgBot, LeveldbAdapter} = require('./adapters');
+const {User, Subscribe} = require('./datastructures');
+const {DmhyRssService, MoeRssService} = require('./services');
+const {Cache, ZlibHelper} = require('./utils');
 const {isToday, genMD5, escapeForTgMarkdown, reduceMagnetQuerystring} = require('./utils/util');
-const ZlibHelper = require('./utils/ZlibHelper');
-
 const {tgBotToken, cachedbPath, userdbPath, magnetHelperLink} = require('../config');
+
 const cachedb = new LeveldbAdapter(cachedbPath);
 const userdb = new LeveldbAdapter(userdbPath);
 const dmhyTgBot = new DmhyTgBot(tgBotToken);
-const dmhyRssService = new (require('./services/DmhyRssService'));
-const moeRssService = new (require('./services/MoeRssService'));
+const dmhyRssService = new DmhyRssService();
+const moeRssService = new MoeRssService();
 const cache = new Cache(fetchAllServices, 900000);
 
 async function fetchAllServices() {
@@ -81,7 +75,7 @@ async function checkUserFetchedList(user, fetchedList) {
 dmhyTgBot.addCommand(/\/subs ([^;]+)(?:;([^;]+)?)?/, async (tgMessage) => {
     let user = null;
     const record = await userdb.getV(tgMessage.chatId);
-    const preferredFansub = tgMessage.matchedTexts.length > 2 && tgMessage.matchedTexts[2] === '@' ? fansubList : tgMessage.matchedTexts[2];
+    const preferredFansub = tgMessage.matchedTexts.length > 2 && tgMessage.matchedTexts[2] === '@' ? Subscribe.fansubList : tgMessage.matchedTexts[2];
     if (record) {
         user = User.deserialize(record);
         user.addSubscribe(new Subscribe(tgMessage.matchedText, preferredFansub));
@@ -110,6 +104,7 @@ dmhyTgBot.addCommand(/\/list$/, async (tgMessage) => {
             msg += `Id: ${i.id}\n`;
             msg += `SearchName: ${i.searchName.toString()}\n`;
             msg += `PreferredFansub: ${i.preferredFansub}\n`;
+            msg += `Delete: /delsub-${i.id}\n`;
             msg += `-----------\n`;
         });
         dmhyTgBot.sendMessage(tgMessage.chatId, msg);
@@ -124,6 +119,19 @@ dmhyTgBot.addCommand(/\/delsubs (.+)/, async (tgMessage) => {
     if (record && ids.length > 0) {
         const user = User.deserialize(record);
         ids.forEach(id => id && user.deleteSubscribe(id));
+        await userdb.setKV(tgMessage.chatId, user.serialize());
+        dmhyTgBot.sendMessage(tgMessage.chatId, 'done!');
+    } else {
+        dmhyTgBot.sendMessage(tgMessage.chatId, 'No record!');
+    }
+});
+
+dmhyTgBot.addCommand(/\/delsub-(.+)/, async (tgMessage) => {
+    const record = await userdb.getV(tgMessage.chatId);
+    const id = tgMessage.matchedText;
+    if (record && id) {
+        const user = User.deserialize(record);
+        user.deleteSubscribe(id);
         await userdb.setKV(tgMessage.chatId, user.serialize());
         dmhyTgBot.sendMessage(tgMessage.chatId, 'done!');
     } else {
