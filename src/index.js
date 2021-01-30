@@ -126,7 +126,7 @@ dmhyTgBot.addCommand(/\/delsubs (.+)/, async (tgMessage) => {
     }
 });
 
-dmhyTgBot.addCommand(/\/delsub-(.+)/, async (tgMessage) => {
+dmhyTgBot.addCommand(/\/delsub(.+)/, async (tgMessage) => {
     const record = await userdb.getV(tgMessage.chatId);
     const id = tgMessage.matchedText;
     if (record && id) {
