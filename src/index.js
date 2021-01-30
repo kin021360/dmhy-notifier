@@ -105,7 +105,7 @@ dmhyTgBot.addCommand(/\/list$/, async (tgMessage) => {
             msg += `SearchName: ${i.searchName.toString()}\n`;
             msg += `PreferredFansub: ${i.preferredFansub}\n`;
             msg += `Delete: /delsub${i.id}\n`;
-            msg += `-----------\n`;
+            msg += `-\n`;
         });
         dmhyTgBot.sendMessage(tgMessage.chatId, msg);
     } else {
