@@ -101,8 +101,8 @@ dmhyTgBot.addCommand(/\/list$/, async (tgMessage) => {
     const record = await userdb.getV(tgMessage.chatId);
     if (record) {
         const user = User.deserialize(record);
-        const list = user.subscribeList.map((i) => {
-            let msg = '';
+        const list = user.subscribeList.map((i, index) => {
+            let msg = `${index + 1}.\n`;
             msg += `Id: ${i.id}\n`;
             msg += `SearchName: ${i.searchName.toString()}\n`;
             msg += `PreferredFansub: ${i.preferredFansub}\n`;
@@ -110,6 +110,7 @@ dmhyTgBot.addCommand(/\/list$/, async (tgMessage) => {
             msg += `----------------\n`;
             return msg;
         });
+        dmhyTgBot.sendMessage(tgMessage.chatId, `Total items: ${list.length}`);
         messagesSplit(list).forEach(i => dmhyTgBot.sendMessage(tgMessage.chatId, i));
     } else {
         dmhyTgBot.sendMessage(tgMessage.chatId, 'No record!');
