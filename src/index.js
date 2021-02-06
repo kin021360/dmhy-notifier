@@ -14,7 +14,7 @@ const {DmhyTgBot, LeveldbAdapter} = require('./adapters');
 const {User, Subscribe} = require('./datastructures');
 const {DmhyRssService, MoeRssService} = require('./services');
 const {Cache, ZlibHelper} = require('./utils');
-const {isToday, genMD5, escapeForTgMarkdown, reduceMagnetQuerystring} = require('./utils/util');
+const {isToday, genMD5, escapeForTgMarkdown, reduceMagnetQuerystring, reduceMessagesSplit} = require('./utils/util');
 const {tgBotToken, cachedbPath, userdbPath, magnetHelperLink} = require('../config');
 
 const cachedb = new LeveldbAdapter(cachedbPath);
@@ -98,16 +98,17 @@ dmhyTgBot.addCommand(/\/listsubs$/, async (tgMessage) => {
 dmhyTgBot.addCommand(/\/list$/, async (tgMessage) => {
     const record = await userdb.getV(tgMessage.chatId);
     if (record) {
-        let msg = '';
         const user = User.deserialize(record);
-        user.subscribeList.forEach((i) => {
+        const list = user.subscribeList.map((i) => {
+            let msg = '';
             msg += `Id: ${i.id}\n`;
             msg += `SearchName: ${i.searchName.toString()}\n`;
             msg += `PreferredFansub: ${i.preferredFansub}\n`;
             msg += `Delete: /delsub${i.id}\n`;
-            msg += `-\n`;
+            msg += `----------------\n`;
+            return msg;
         });
-        dmhyTgBot.sendMessage(tgMessage.chatId, msg);
+        reduceMessagesSplit(list).forEach(i => dmhyTgBot.sendMessage(tgMessage.chatId, i));
     } else {
         dmhyTgBot.sendMessage(tgMessage.chatId, 'No record!');
     }

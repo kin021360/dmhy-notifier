@@ -45,5 +45,14 @@ module.exports = {
             return splited.slice(0, maxQuerystring).join('&');
         }
         return magnet;
+    },
+    reduceMessagesSplit(messageList, eachMsgItems = 10) {
+        return messageList.reduce((current, item, index) => {
+            const msgIndex = Math.floor(index / eachMsgItems);
+            let msg = current[msgIndex] || '';
+            msg += item;
+            current[msgIndex] = msg;
+            return current;
+        }, []);
     }
 };
