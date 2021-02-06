@@ -46,7 +46,7 @@ module.exports = {
         }
         return magnet;
     },
-    reduceMessagesSplit(messageList, eachMsgItems = 10) {
+    messagesSplit(messageList, eachMsgItems = 15) {
         return messageList.reduce((current, item, index) => {
             const msgIndex = Math.floor(index / eachMsgItems);
             let msg = current[msgIndex] || '';

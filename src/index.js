@@ -14,7 +14,7 @@ const {DmhyTgBot, LeveldbAdapter} = require('./adapters');
 const {User, Subscribe} = require('./datastructures');
 const {DmhyRssService, MoeRssService} = require('./services');
 const {Cache, ZlibHelper} = require('./utils');
-const {isToday, genMD5, escapeForTgMarkdown, reduceMagnetQuerystring, reduceMessagesSplit} = require('./utils/util');
+const {isToday, genMD5, escapeForTgMarkdown, reduceMagnetQuerystring, messagesSplit} = require('./utils/util');
 const {tgBotToken, cachedbPath, userdbPath, magnetHelperLink} = require('../config');
 
 const cachedb = new LeveldbAdapter(cachedbPath);
@@ -46,7 +46,7 @@ async function fetchAllServices() {
 }
 
 async function checkUserFetchedList(user, fetchedList) {
-    let titles = '';
+    let titles = [];
     if (!fetchedList) return titles;
     for (const subscribe of user.subscribeList) {
         const satisfiedItems = subscribe.checkSatisfiedItems(fetchedList);
@@ -54,9 +54,9 @@ async function checkUserFetchedList(user, fetchedList) {
             const cacheKey = user.chatId + genMD5(satisfiedItem.title);
             const exist = await cachedb.getV(cacheKey);
             if (!exist) {
-                await cachedb.setKV(cacheKey, true, 86400000);
-                titles += `${escapeForTgMarkdown(satisfiedItem.title)} - *${satisfiedItem.pubDate}*\n`;
-                titles += satisfiedItem.link.map((i) => {
+                let title = '';
+                title += `${escapeForTgMarkdown(satisfiedItem.title)} - *${satisfiedItem.pubDate}*\n`;
+                title += satisfiedItem.link.map((i) => {
                     let str = `*${i.source}:*\n- ${escapeForTgMarkdown(i.link)}`;
                     if (magnetHelperLink && i.magnet) {
                         const shorterMagnet = reduceMagnetQuerystring(i.magnet);
@@ -64,7 +64,9 @@ async function checkUserFetchedList(user, fetchedList) {
                     }
                     return str;
                 }).join('\n');
-                titles += '\n';
+                title += '\n';
+                titles.push(title);
+                await cachedb.setKV(cacheKey, true, 86400000);
             }
         }
     }
@@ -108,7 +110,7 @@ dmhyTgBot.addCommand(/\/list$/, async (tgMessage) => {
             msg += `----------------\n`;
             return msg;
         });
-        reduceMessagesSplit(list).forEach(i => dmhyTgBot.sendMessage(tgMessage.chatId, i));
+        messagesSplit(list).forEach(i => dmhyTgBot.sendMessage(tgMessage.chatId, i));
     } else {
         dmhyTgBot.sendMessage(tgMessage.chatId, 'No record!');
     }
@@ -145,9 +147,13 @@ dmhyTgBot.addCommand(/\/check$/, async (tgMessage) => {
     const record = await userdb.getV(tgMessage.chatId);
     const user = record && User.deserialize(record);
 
-    let titles = await checkUserFetchedList(user, fetchedList);
-    if (!user || !titles) titles = 'No update!';
-    dmhyTgBot.sendMessage(tgMessage.chatId, titles, {parse_mode: 'Markdown'});
+    const titles = await checkUserFetchedList(user, fetchedList);
+    if (!user || !titles.length) {
+        dmhyTgBot.sendMessage(tgMessage.chatId, 'No update!');
+        return;
+    }
+    messagesSplit(titles)
+        .forEach(i => dmhyTgBot.sendMessage(tgMessage.chatId, i, {parse_mode: 'Markdown'}));
 });
 
 dmhyTgBot.addCommand(/.+/, async (tgMessage) => {
@@ -175,11 +181,10 @@ setInterval(async () => {
 
         for (const record of recordSet) {
             const user = User.deserialize(record.value);
-            let titles = await checkUserFetchedList(user, fetchedList);
-            if (titles) {
-                dmhyTgBot.sendMessage(user.chatId, titles, {parse_mode: 'Markdown'});
-            } else {
-                // dmhyTgBot.sendMessage(user.chatId, 'No update!');
+            const titles = await checkUserFetchedList(user, fetchedList);
+            if (titles.length) {
+                messagesSplit(titles)
+                    .forEach(i => dmhyTgBot.sendMessage(user.chatId, i, {parse_mode: 'Markdown'}));
             }
         }
         const nextTime = new Date();
