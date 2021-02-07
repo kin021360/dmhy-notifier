@@ -3,8 +3,9 @@ const leveldown = require('leveldown');
 const levelttl = require('level-ttl');
 
 class LeveldbAdapter {
-    constructor(dbPath) {
+    constructor(dbPath, EntityType = null) {
         this.db = levelttl(levelup(leveldown(dbPath)));
+        this.EntityType = EntityType;
     }
 
     setKV(key, value, ttl) {
@@ -13,6 +14,14 @@ class LeveldbAdapter {
 
     getV(key) {
         return this.db.get(key.toString()).then(v => v.toString()).catch(() => null);
+    }
+
+    async getEntity(key) {
+        if (this.EntityType) {
+            const record = await this.getV(key);
+            return record && this.EntityType.deserialize(record);
+        }
+        return null;
     }
 
     scanKV(limit = -1) {

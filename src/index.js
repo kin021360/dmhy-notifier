@@ -18,7 +18,7 @@ const {isToday, genMD5, escapeForTgMarkdown, reduceMagnetQuerystring, messagesSp
 const {tgBotToken, cachedbPath, userdbPath, magnetHelperLink} = require('../config');
 
 const cachedb = new LeveldbAdapter(cachedbPath);
-const userdb = new LeveldbAdapter(userdbPath);
+const userdb = new LeveldbAdapter(userdbPath, User);
 const dmhyTgBot = new DmhyTgBot(tgBotToken);
 const dmhyRssService = new DmhyRssService();
 const moeRssService = new MoeRssService();
@@ -75,11 +75,9 @@ async function checkUserFetchedList(user, fetchedList) {
 
 
 dmhyTgBot.addCommand(/\/subs ([^;]+)(?:;([^;]+)?)?/, async (tgMessage) => {
-    let user = null;
-    const record = await userdb.getV(tgMessage.chatId);
+    let user = await userdb.getEntity(tgMessage.chatId);
     const preferredFansub = tgMessage.matchedTexts.length > 2 && tgMessage.matchedTexts[2] === '@' ? Subscribe.fansubList : tgMessage.matchedTexts[2];
-    if (record) {
-        user = User.deserialize(record);
+    if (user) {
         user.addSubscribe(new Subscribe(tgMessage.matchedText, preferredFansub));
     } else {
         user = new User(tgMessage.chatId).addSubscribe(new Subscribe(tgMessage.matchedText, preferredFansub));
@@ -98,9 +96,8 @@ dmhyTgBot.addCommand(/\/listsubs$/, async (tgMessage) => {
 });
 
 dmhyTgBot.addCommand(/\/list$/, async (tgMessage) => {
-    const record = await userdb.getV(tgMessage.chatId);
-    if (record) {
-        const user = User.deserialize(record);
+    const user = await userdb.getEntity(tgMessage.chatId);
+    if (user) {
         const list = user.subscribeList.map((i, index) => {
             let msg = `${index + 1}.\n`;
             msg += `Id: ${i.id}\n`;
@@ -118,10 +115,9 @@ dmhyTgBot.addCommand(/\/list$/, async (tgMessage) => {
 });
 
 dmhyTgBot.addCommand(/\/delsubs (.+)/, async (tgMessage) => {
-    const record = await userdb.getV(tgMessage.chatId);
+    const user = await userdb.getEntity(tgMessage.chatId);
     const ids = tgMessage.matchedText.split(',');
-    if (record && ids.length > 0) {
-        const user = User.deserialize(record);
+    if (user && ids.length) {
         ids.forEach(id => id && user.deleteSubscribe(id));
         await userdb.setKV(tgMessage.chatId, user.serialize());
         dmhyTgBot.sendMessage(tgMessage.chatId, 'done!');
@@ -131,13 +127,12 @@ dmhyTgBot.addCommand(/\/delsubs (.+)/, async (tgMessage) => {
 });
 
 dmhyTgBot.addCommand(/\/delsub(.+)/, async (tgMessage) => {
-    const record = await userdb.getV(tgMessage.chatId);
+    const user = await userdb.getEntity(tgMessage.chatId);
     const id = tgMessage.matchedText;
-    if (record && id) {
-        const user = User.deserialize(record);
+    if (user && id) {
         user.deleteSubscribe(id);
         await userdb.setKV(tgMessage.chatId, user.serialize());
-        dmhyTgBot.sendMessage(tgMessage.chatId, 'done!');
+        dmhyTgBot.sendMessage(tgMessage.chatId, 'Done!');
     } else {
         dmhyTgBot.sendMessage(tgMessage.chatId, 'No record!');
     }
@@ -145,9 +140,7 @@ dmhyTgBot.addCommand(/\/delsub(.+)/, async (tgMessage) => {
 
 dmhyTgBot.addCommand(/\/check$/, async (tgMessage) => {
     const fetchedList = await cache.get();
-    const record = await userdb.getV(tgMessage.chatId);
-    const user = record && User.deserialize(record);
-
+    const user = await userdb.getEntity(tgMessage.chatId);
     const titles = await checkUserFetchedList(user, fetchedList);
     if (!user || !titles.length) {
         dmhyTgBot.sendMessage(tgMessage.chatId, 'No update!');
