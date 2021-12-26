@@ -1,23 +1,34 @@
-const RssService = require('./RssService');
+import { RssService } from 'src/adapters/rssServices/RssService';
 
-class DmhyRssService extends RssService {
+interface DmhyRssResult {
+    items: [
+        {
+            [key: string]: unknown;
+            link: string;
+            pubDate: string;
+            enclosure: {
+                url: string;
+            };
+        },
+    ];
+}
+
+export class DmhyRssService extends RssService {
     constructor() {
-        super('https://share.dmhy.org/topics/rss/rss.xml', 'DmhyRssService.js');
+        super('https://share.dmhy.org/topics/rss/rss.xml', 'DmhyRssService');
     }
 
-    async fetch(querystring) {
+    async fetch(querystring: Record<string, string>): Promise<Record<string, any>[]> {
         try {
-            const res = await super.fetch(querystring);
-            res.items.map((item) => {
-                item.link = [{source: 'Dmhy', link: item.link.replace('http', 'https'), magnet: item.enclosure.url}];
-                item.pubDate = item.pubDate.substring(5, 25);
-            });
-            return res.items;
+            const res = (await super.fetchRss(querystring)) as DmhyRssResult;
+            return res.items.map((item) => ({
+                ...item,
+                link: [{ source: 'Dmhy', link: item.link.replace('http', 'https'), magnet: item.enclosure.url }],
+                pubDate: item.pubDate.substring(5, 25),
+            }));
         } catch (e) {
-            this.logger.error(e);
+            // this.logger.error(e);
             return [];
         }
     }
 }
-
-module.exports = DmhyRssService;
