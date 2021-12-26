@@ -1,7 +1,2 @@
-const User = require('./User');
-const Subscribe = require('./Subscribe');
-
-module.exports = {
-    User,
-    Subscribe
-};
+export { User } from 'src/entities/User';
+export { Subscribe } from 'src/entities/Subscribe';
