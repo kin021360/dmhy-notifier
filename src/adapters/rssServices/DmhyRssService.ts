@@ -18,7 +18,7 @@ export class DmhyRssService extends RssService {
         super('https://share.dmhy.org/topics/rss/rss.xml', 'DmhyRssService');
     }
 
-    async fetch(querystring: Record<string, string>): Promise<Record<string, any>[]> {
+    async fetch(querystring: Record<string, string> = {}): Promise<Record<string, any>[]> {
         try {
             const res = (await super.fetchRss(querystring)) as DmhyRssResult;
             return res.items.map((item) => ({

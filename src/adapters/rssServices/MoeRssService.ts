@@ -17,7 +17,7 @@ export class MoeRssService extends RssService {
         super('https://bangumi.moe/rss/latest', 'MoeRssService.js');
     }
 
-    async fetch(querystring: Record<string, string>): Promise<Record<string, any>[]> {
+    async fetch(querystring: Record<string, string> = {}): Promise<Record<string, any>[]> {
         try {
             const res = (await super.fetchRss(querystring)) as MoeRssResult;
             return res.items.map((item) => ({
