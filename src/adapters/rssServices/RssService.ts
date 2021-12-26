@@ -1,18 +1,20 @@
+import { Logger } from 'pino';
 import Parser from 'rss-parser';
 import { URL } from 'url';
 import util from 'util';
 
-// const log4js = require('log4js');
+import { logger as baseLogger } from 'src/logger';
 
 const parser = new Parser();
 parser.parseURL = util.promisify(parser.parseURL);
 
 export class RssService {
     public rssEndpoint: string;
+    public logger: Logger;
 
     constructor(rssEndpoint: string, loggerName = 'RssService') {
         this.rssEndpoint = rssEndpoint;
-        // this.logger = log4js.getLogger(loggerName);
+        this.logger = baseLogger.child({ source: loggerName });
     }
 
     static setQuerystring(querystring: Record<string, string>, urlObject: URL) {

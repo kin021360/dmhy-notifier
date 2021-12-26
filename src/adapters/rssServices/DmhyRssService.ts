@@ -27,7 +27,7 @@ export class DmhyRssService extends RssService {
                 pubDate: item.pubDate.substring(5, 25),
             }));
         } catch (e) {
-            // this.logger.error(e);
+            this.logger.error(e);
             return [];
         }
     }

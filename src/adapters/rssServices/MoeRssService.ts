@@ -26,7 +26,7 @@ export class MoeRssService extends RssService {
                 pubDate: moment.tz(item.pubDate, 'Asia/Hong_Kong').format('DD MMM YYYY HH:mm:ss'),
             }));
         } catch (e) {
-            // this.logger.error(e);
+            this.logger.error(e);
             return [];
         }
     }
