@@ -1,22 +1,30 @@
-const log4js = require('log4js');
-const logger = log4js.getLogger('Cache.js');
+import { logger as baseLogger } from 'src/logger';
 
-module.exports = function (func, cacheTime, executorTimeoutMs = 70000) {
-    if (typeof func !== "function" || isNaN(Number(cacheTime))) {
-        throw new Error("Invalid construct values!");
+const logger = baseLogger.child({ source: 'Cache' });
+
+export class Cache<T> {
+    private readonly updateFunc: (() => Promise<T>) | ((callback: (data: T, err?: Error) => void) => void);
+    private readonly ttl: number;
+    private readonly executorTimeoutMs: number;
+
+    private lastUpdateTime: Date | undefined;
+    private cacheObject: T | undefined;
+    private lockedTime: Date | undefined;
+    private isLocked = false;
+
+    constructor(
+        updateFunc: (() => Promise<T>) | ((callback: (data: T, err?: Error) => void) => void),
+        ttl: number,
+        executorTimeoutMs = 70000,
+    ) {
+        this.updateFunc = updateFunc;
+        this.ttl = ttl;
+        this.executorTimeoutMs = executorTimeoutMs;
     }
 
-    const updateFunc = func;
-    const ttl = cacheTime;
-    const executorTimeout = executorTimeoutMs;
-    let lastUpdateTime = null;
-    let cacheObject = null;
-    let lockedTime = null;
-    let isLocked = false;
-
-    function updateExecutor() {
+    private updateExecutor(): Promise<T> {
         return new Promise((resolve, reject) => {
-            const resType = updateFunc((data, err) => {
+            const resType = this.updateFunc((data, err) => {
                 if (resType instanceof Promise) return;
                 if (err) return reject(err);
                 resolve(data);
@@ -25,47 +33,46 @@ module.exports = function (func, cacheTime, executorTimeoutMs = 70000) {
         });
     }
 
-    function timer(expire) {
-        const time = expire || 1000;
-        return new Promise((resolve, reject) => {
+    private timer(expire = 1000): Promise<'timeout'> {
+        return new Promise((resolve) => {
             setTimeout(() => {
                 resolve('timeout');
-            }, time);
+            }, expire);
         });
     }
 
-    function lock() {
-        if (isLocked) return false;
-        isLocked = true;
-        lockedTime = new Date();
+    private lock() {
+        if (this.isLocked) return false;
+        this.isLocked = true;
+        this.lockedTime = new Date();
         return true;
     }
 
-    function release() {
-        isLocked = false;
+    private release() {
+        this.isLocked = false;
     }
 
-    async function updateIfExpire() {
-        const startTime = new Date();
-        if (!(!lastUpdateTime || startTime - lastUpdateTime > ttl)) return;
-        if (!lock()) return;
+    private async updateIfExpire() {
+        const nowTime = new Date().getTime();
+        if (this.lastUpdateTime && nowTime - this.lastUpdateTime.getTime() < this.ttl) return;
+        if (!this.lock()) return;
         try {
             logger.info('Locked!');
-            const timeout = timer(executorTimeout);
-            const executor = updateExecutor(startTime);
+            const timeout = this.timer(this.executorTimeoutMs);
+            const executor = this.updateExecutor();
             const result = await Promise.race([timeout, executor]);
             if (result !== 'timeout') {
-                lastUpdateTime = new Date();
-                cacheObject = result;
+                this.lastUpdateTime = new Date();
+                this.cacheObject = result;
             }
         } finally {
             logger.info('Released!');
-            release();
+            this.release();
         }
     }
 
-    this.get = async () => {
-        await updateIfExpire();
-        return cacheObject;
+    async get(): Promise<T | undefined> {
+        await this.updateIfExpire();
+        return this.cacheObject;
     }
-};
+}
