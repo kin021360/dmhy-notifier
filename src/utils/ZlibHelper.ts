@@ -1,25 +1,19 @@
-const zlib = require('zlib');
+import zlib from 'zlib';
 
-class ZlibHelper {
-    static zip(input, isOutputBase64 = true) {
+export const ZlibHelper = {
+    zip: (input: string | Buffer, isOutputBase64 = true): string | Buffer => {
         const dataBuff = typeof input === 'string' ? Buffer.from(input, 'utf8') : input;
-        const outBuffer = zlib.deflateSync(dataBuff, {level: 9});
+        const outBuffer = zlib.deflateSync(dataBuff, { level: 9 });
         return isOutputBase64 ? outBuffer.toString('base64') : outBuffer;
-    }
+    },
 
-    static unzip(input, isOutputUtf8 = true) {
+    unzip: (input: string | Buffer, isOutputUtf8 = true): string | Buffer => {
         const dataBuff = typeof input === 'string' ? Buffer.from(input, 'base64') : input;
         const outBuffer = zlib.unzipSync(dataBuff);
         return isOutputUtf8 ? outBuffer.toString('utf8') : outBuffer;
-    }
+    },
 
-    static uint8ArrayToBase64(uint8Arr) {
-        return Buffer.from(uint8Arr).toString('base64');
-    }
+    uint8ArrayToBase64: (uint8Arr: Uint8Array): string => Buffer.from(uint8Arr).toString('base64'),
 
-    static base64ToUint8Array(base64Str) {
-        return new Uint8Array(Buffer.from(base64Str, 'base64').buffer);
-    }
-}
-
-module.exports = ZlibHelper;
+    base64ToUint8Array: (base64Str: string): Uint8Array => new Uint8Array(Buffer.from(base64Str, 'base64').buffer),
+};
