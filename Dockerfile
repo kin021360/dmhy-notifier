@@ -1,4 +1,4 @@
-ARG AppName=nodejsapp
+ARG AppName=dmhy-notifier
 
 FROM node:12-stretch AS built
 ARG AppName
