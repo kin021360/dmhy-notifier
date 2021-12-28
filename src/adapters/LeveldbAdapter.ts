@@ -1,34 +1,53 @@
-const levelup = require('levelup');
-const leveldown = require('leveldown');
-const levelttl = require('level-ttl');
+import levelttl, { LevelTTL } from 'level-ttl';
+import leveldown from 'leveldown';
+import levelup from 'levelup';
 
-class LeveldbAdapter {
-    constructor(dbPath, EntityType = null) {
+import { LeveldbResult } from 'src/entities/LeveldbResult';
+
+export interface Kvp {
+    key: string;
+    value: string;
+}
+
+export class LeveldbAdapter {
+    private readonly db: LevelTTL;
+
+    constructor(dbPath: string) {
         this.db = levelttl(levelup(leveldown(dbPath)));
-        this.EntityType = EntityType;
     }
 
-    setKV(key, value, ttl) {
-        return this.db.put(key.toString(), value, {ttl});
+    setKV(key: string | number, value: string, ttl?: number): Promise<void> {
+        return this.db.put(String(key), value, { ttl });
     }
 
-    getV(key) {
-        return this.db.get(key.toString()).then(v => v.toString()).catch(() => null);
+    remove(key: string | number): Promise<void> {
+        return this.db.del(String(key));
     }
 
-    async getEntity(key) {
-        if (this.EntityType) {
-            const record = await this.getV(key);
-            return record && this.EntityType.deserialize(record);
+    getV(key: string | number): Promise<LeveldbResult<string>> {
+        return this.db
+            .get(key.toString())
+            .then((v) => ({ isExisted: true, record: String(v) }))
+            .catch(() => ({ isExisted: false, record: null }));
+    }
+
+    async getEntity<T>(key: string | number, deserializeFn: (x: string) => T = JSON.parse): Promise<LeveldbResult<T>> {
+        const { isExisted, record } = await this.getV(key);
+        if (isExisted && record) {
+            return {
+                isExisted,
+                record: deserializeFn(record),
+            };
         }
-        return null;
+        return { isExisted, record: null };
     }
 
-    scanKV(limit = -1) {
+    scanKV(limit = -1): Promise<Kvp[]> {
         return new Promise((resolve, reject) => {
-            const allKeyValue = [];
-            const readStream = this.db.createReadStream({limit});
-            readStream.on('data', data => allKeyValue.push({key: data.key.toString(), value: data.value.toString()}))
+            const allKeyValue = [] as Kvp[];
+            const readStream = this.db.createReadStream({ limit });
+            readStream
+                .on('data', (data) => allKeyValue.push({ key: String(data.key), value: String(data.value) }))
                 .on('error', reject)
                 .on('end', () => resolve(allKeyValue))
                 .on('close', () => {
@@ -36,36 +55,7 @@ class LeveldbAdapter {
                     readStream.removeAllListeners('error');
                     readStream.removeAllListeners('end');
                     readStream.removeAllListeners('close');
-                    readStream.destroy();
                 });
         });
     }
-
-    async scanKV2(limit = -1) {
-        const allKeyValue = [];
-        const iterator = this.db.iterator({limit});
-        const iteratorNext = () => new Promise((resolve, reject) => {
-            iterator.next((error, key, value) => {
-                if (error) return reject(error);
-                if (key === undefined && value === undefined) return resolve(null);
-                resolve({key: key.toString(), value: value.toString()});
-            });
-        });
-
-        try {
-            let kv = await iteratorNext();
-            while (kv) {
-                allKeyValue.push(kv);
-                kv = await iteratorNext();
-            }
-            return allKeyValue;
-        } catch (e) {
-            throw e;
-        } finally {
-            iterator.end(() => {
-            });
-        }
-    }
 }
-
-module.exports = LeveldbAdapter;
