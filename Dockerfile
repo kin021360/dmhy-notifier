@@ -1,8 +1,7 @@
+ARG AppName=nodejsapp
+
 FROM node:12-stretch AS built
-MAINTAINER Nathan Lam
-
-ARG AppName='nodejsapp'
-
+ARG AppName
 WORKDIR /home/$AppName/
 
 # Copy project
@@ -13,7 +12,7 @@ RUN yarn lint
 RUN yarn build
 
 FROM node:12-stretch
-
+ARG AppName
 WORKDIR /home/$AppName/
 
 COPY --from=built /home/$AppName/package.json .

@@ -13,6 +13,7 @@
     "leveldown": "^5.6.0",
     "levelup": "^4.4.0",
     "log4js": "^6.3.0",
+    "module-alias": "^2.2.2",
     "moment-timezone": "^0.5.33",
     "node-telegram-bot-api": "^0.51.0",
     "pino": "7.6.1",
