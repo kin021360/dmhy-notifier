@@ -1,16 +1,25 @@
-FROM node:12-stretch
+FROM node:12-stretch AS built
 MAINTAINER Nathan Lam
 
-WORKDIR /home/dmhy-notifier/
+ARG AppName='nodejsapp'
+
+WORKDIR /home/$AppName/
 
 # Copy project
 COPY ./ ./
 
-# Update npm
-RUN npm install -g npm@latest
+RUN yarn install
+RUN yarn lint
+RUN yarn build
 
-# Install npm modules.
-RUN npm install
+FROM node:12-stretch
+
+WORKDIR /home/$AppName/
+
+COPY --from=built /home/$AppName/package.json .
+COPY --from=built /home/$AppName/yarn.lock .
+COPY --from=built /home/$AppName/dist ./dist
+RUN yarn install --prod
 
 # Execute command
-CMD npm start
+CMD yarn start
