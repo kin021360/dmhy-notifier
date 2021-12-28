@@ -1,10 +1,10 @@
 import { Subscribe } from 'src/entities/Subscribe';
 
 export class User {
-    public chatId: string;
+    public chatId: number;
     public subscribeSet: Record<string, Subscribe>;
 
-    constructor(chatId: string) {
+    constructor(chatId: number) {
         this.chatId = chatId;
         this.subscribeSet = {};
     }

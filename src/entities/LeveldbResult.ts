@@ -1,4 +1,4 @@
 export interface LeveldbResult<T> {
     isExisted: boolean;
-    record: T | null;
+    record?: T;
 }

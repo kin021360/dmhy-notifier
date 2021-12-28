@@ -1,10 +1,10 @@
 import zlib from 'zlib';
 
 export const ZlibHelper = {
-    zip: (input: string | Buffer, isOutputBase64 = true): string | Buffer => {
+    zip: (input: string | Buffer): string => {
         const dataBuff = typeof input === 'string' ? Buffer.from(input, 'utf8') : input;
         const outBuffer = zlib.deflateSync(dataBuff, { level: 9 });
-        return isOutputBase64 ? outBuffer.toString('base64') : outBuffer;
+        return outBuffer.toString('base64');
     },
 
     unzip: (input: string | Buffer, isOutputUtf8 = true): string | Buffer => {

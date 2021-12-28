@@ -51,3 +51,5 @@ export const messagesSplit = (messageList: string[], eachMsgItems = 15): string[
         current[msgIndex] = msg;
         return current;
     }, [] as string[]);
+
+export const delay = (ms: number): Promise<void> => new Promise((resolve) => setTimeout(resolve, ms));

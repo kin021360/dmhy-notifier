@@ -71,8 +71,10 @@ export class Cache<T> {
         }
     }
 
-    async get(): Promise<T | undefined> {
+    async get(): Promise<T | undefined>;
+    async get(defaultValue: T): Promise<T>;
+    async get(defaultValue?: T): Promise<T | undefined> {
         await this.updateIfExpire();
-        return this.cacheObject;
+        return this.cacheObject || defaultValue;
     }
 }

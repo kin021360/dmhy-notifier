@@ -1,30 +1,28 @@
-import { RssService } from 'src/adapters/rssServices/RssService';
+import moment from 'moment-timezone';
 
-interface DmhyRssResult {
-    items: [
-        {
-            [key: string]: unknown;
-            link: string;
-            pubDate: string;
-            enclosure: {
-                url: string;
-            };
-        },
-    ];
-}
+import { RssService } from 'src/adapters/rssServices/RssService';
+import { RssResultItem } from 'src/entities/RssResultItem';
 
 export class DmhyRssService extends RssService {
     constructor() {
         super('https://share.dmhy.org/topics/rss/rss.xml', 'DmhyRssService');
     }
 
-    async fetch(querystring: Record<string, string> = {}): Promise<Record<string, any>[]> {
+    async fetch(querystring: Record<string, string> = {}): Promise<RssResultItem[]> {
         try {
-            const res = (await super.fetchRss(querystring)) as DmhyRssResult;
+            const res = await super.fetchRss(querystring);
             return res.items.map((item) => ({
                 ...item,
-                link: [{ source: 'Dmhy', link: item.link.replace('http', 'https'), magnet: item.enclosure.url }],
-                pubDate: item.pubDate.substring(5, 25),
+                downloadLinks: [
+                    {
+                        source: 'Dmhy',
+                        link: item.link?.replace('http', 'https') || '',
+                        magnet: item.enclosure?.url,
+                    },
+                ],
+                pubDate: moment.tz(item.isoDate, 'Asia/Hong_Kong').format('DD MMM YYYY HH:mm:ss'),
+                title: item.title!,
+                isoDate: item.isoDate!,
             }));
         } catch (e) {
             this.logger.error(e);

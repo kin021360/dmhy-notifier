@@ -1,52 +1,54 @@
-'use strict';
-const log4js = require('log4js');
-log4js.configure({
-    appenders: {
-        console: {type: 'console'}
-    },
-    categories: {
-        default: {appenders: ['console'], level: 'info'},
-    }
-});
-const logger = log4js.getLogger('index.js');
+import { LeveldbAdapter } from 'src/adapters/LeveldbAdapter';
+import { TgBot } from 'src/adapters/TgBot';
+import { DmhyRssService, MoeRssService } from 'src/adapters/rssServices';
+import { cachedbPath, magnetHelperLink, tgBotToken, userdbPath } from 'src/config';
+import { Subscribe, User } from 'src/entities';
+import { RssResultItem } from 'src/entities/RssResultItem';
+import { logger as baseLogger } from 'src/logger';
+import {
+    Cache,
+    ZlibHelper,
+    escapeForTgMarkdown,
+    genMD5,
+    isToday,
+    messagesSplit,
+    reduceMagnetQuerystring,
+} from 'src/utils';
 
-const {DmhyTgBot, LeveldbAdapter} = require('./adapters');
-const {User, Subscribe} = require('./datastructures');
-const {DmhyRssService, MoeRssService} = require('./services');
-const {Cache, ZlibHelper} = require('./utils');
-const {isToday, genMD5, escapeForTgMarkdown, reduceMagnetQuerystring, messagesSplit} = require('./utils/util');
-const {tgBotToken, cachedbPath, userdbPath, magnetHelperLink} = require('../config');
+const logger = baseLogger.child({ source: 'app' });
+const tgBot = new TgBot(tgBotToken);
 
 const cachedb = new LeveldbAdapter(cachedbPath);
-const userdb = new LeveldbAdapter(userdbPath, User);
-const dmhyTgBot = new DmhyTgBot(tgBotToken);
+const userdb = new LeveldbAdapter<User>(userdbPath, User.deserialize);
+
 const dmhyRssService = new DmhyRssService();
 const moeRssService = new MoeRssService();
-const cache = new Cache(fetchAllServices, 900000);
 
-async function fetchAllServices() {
+const fetchAllServices = async (): Promise<RssResultItem[]> => {
     try {
-        const [feed1, feed2] = await Promise.all([moeRssService.fetch({limit: 100}), dmhyRssService.fetch()]);
+        const [feed1, feed2] = await Promise.all([moeRssService.fetch({ limit: '100' }), dmhyRssService.fetch()]);
         const allItems = feed1.reduce((current, item) => {
-            const find = current.find(i => i.title === item.title);
+            const find = current.find((i) => i.title === item.title);
             if (find) {
-                find.link.push(item.link[0]);
+                find.downloadLinks.push(item.downloadLinks[0]);
             } else {
                 current.push(item);
             }
             return current;
         }, feed2);
-        const list = allItems.filter(i => isToday(i.isoDate));
+        const list = allItems.filter((i) => isToday(i.isoDate));
         logger.info('Fetched & today items: ' + list.length);
         return list;
     } catch (e) {
         logger.error(e);
-        return null;
+        return [];
     }
-}
+};
 
-async function checkUserFetchedList(user, fetchedList) {
-    let titles = [];
+const cache = new Cache(fetchAllServices, 900000);
+
+const checkUserFetchedList = async (user: User, fetchedList: RssResultItem[]) => {
+    const titles: string[] = [];
     if (!fetchedList) return titles;
     for (const subscribe of user.subscribeList) {
         const satisfiedItems = subscribe.checkSatisfiedItems(fetchedList);
@@ -56,47 +58,53 @@ async function checkUserFetchedList(user, fetchedList) {
             if (!exist) {
                 let title = '';
                 title += `${escapeForTgMarkdown(satisfiedItem.title)} - *${satisfiedItem.pubDate}*\n`;
-                title += satisfiedItem.link.map((i) => {
-                    let str = `*${i.source}:*\n- ${escapeForTgMarkdown(i.link)}`;
-                    if (magnetHelperLink && i.magnet) {
-                        const shorterMagnet = reduceMagnetQuerystring(i.magnet);
-                        str += `\n- [Magnet link](${magnetHelperLink}#${encodeURIComponent(ZlibHelper.zip(shorterMagnet.replace('magnet:?', '')))})`;
-                    }
-                    return str;
-                }).join('\n');
+                title += satisfiedItem.downloadLinks
+                    .map((i) => {
+                        let str = `*${i.source}:*\n- ${escapeForTgMarkdown(i.link)}`;
+                        if (magnetHelperLink && i.magnet) {
+                            const shorterMagnet = reduceMagnetQuerystring(i.magnet);
+                            str += `\n- [Magnet link](${magnetHelperLink}#${encodeURIComponent(
+                                ZlibHelper.zip(shorterMagnet.replace('magnet:?', '')),
+                            )})`;
+                        }
+                        return str;
+                    })
+                    .join('\n');
                 title += '\n';
                 titles.push(title);
-                await cachedb.setKV(cacheKey, true, 86400000);
+                await cachedb.setKV(cacheKey, 'true', 86400000);
             }
         }
     }
     return titles;
-}
+};
 
-
-dmhyTgBot.addCommand(/\/subs ([^;]+)(?:;([^;]+)?)?/, async (tgMessage) => {
-    let user = await userdb.getEntity(tgMessage.chatId);
-    const preferredFansub = tgMessage.matchedTexts.length > 2 && tgMessage.matchedTexts[2] === '@' ? Subscribe.fansubList : tgMessage.matchedTexts[2];
+tgBot.addCommand(/\/subs ([^;]+)(?:;([^;]+)?)?/, async (tgMessage) => {
+    let { record: user } = await userdb.getEntity(tgMessage.chatId);
+    const preferredFansub =
+        tgMessage.matchedTexts.length > 2 && tgMessage.matchedTexts[2] === '@'
+            ? Subscribe.fansubList
+            : tgMessage.matchedTexts[2].split(',');
     if (user) {
         user.addSubscribe(new Subscribe(tgMessage.matchedText, preferredFansub));
     } else {
         user = new User(tgMessage.chatId).addSubscribe(new Subscribe(tgMessage.matchedText, preferredFansub));
     }
     await userdb.setKV(tgMessage.chatId, user.serialize());
-    dmhyTgBot.sendMessage(tgMessage.chatId, 'Done!');
+    tgBot.sendMessage(tgMessage.chatId, 'Done!');
 });
 
-dmhyTgBot.addCommand(/\/listsubs$/, async (tgMessage) => {
-    const record = await userdb.getV(tgMessage.chatId);
+tgBot.addCommand(/\/listsubs$/, async (tgMessage) => {
+    const { record } = await userdb.getV(tgMessage.chatId);
     if (record) {
-        dmhyTgBot.sendMessage(tgMessage.chatId, record);
+        tgBot.sendMessage(tgMessage.chatId, record);
     } else {
-        dmhyTgBot.sendMessage(tgMessage.chatId, 'No record!');
+        tgBot.sendMessage(tgMessage.chatId, 'No record!');
     }
 });
 
-dmhyTgBot.addCommand(/\/list$/, async (tgMessage) => {
-    const user = await userdb.getEntity(tgMessage.chatId);
+tgBot.addCommand(/\/list$/, async (tgMessage) => {
+    const { record: user } = await userdb.getEntity(tgMessage.chatId);
     if (user) {
         const list = user.subscribeList.map((i, index) => {
             let msg = `${index + 1}.\n`;
@@ -107,51 +115,54 @@ dmhyTgBot.addCommand(/\/list$/, async (tgMessage) => {
             msg += `----------------\n`;
             return msg;
         });
-        dmhyTgBot.sendMessage(tgMessage.chatId, `Total items: ${list.length}`);
-        messagesSplit(list).forEach(i => dmhyTgBot.sendMessage(tgMessage.chatId, i));
+        await tgBot.sendMessage(tgMessage.chatId, `Total items: ${list.length}`);
+        for (const i of messagesSplit(list)) {
+            await tgBot.sendMessage(tgMessage.chatId, i);
+        }
     } else {
-        dmhyTgBot.sendMessage(tgMessage.chatId, 'No record!');
+        tgBot.sendMessage(tgMessage.chatId, 'No record!');
     }
 });
 
-dmhyTgBot.addCommand(/\/delsubs (.+)/, async (tgMessage) => {
-    const user = await userdb.getEntity(tgMessage.chatId);
+tgBot.addCommand(/\/delsubs (.+)/, async (tgMessage) => {
+    const { record: user } = await userdb.getEntity(tgMessage.chatId);
     const ids = tgMessage.matchedText.split(',');
     if (user && ids.length) {
-        ids.forEach(id => id && user.deleteSubscribe(id));
+        ids.forEach((id) => id && user.deleteSubscribe(id));
         await userdb.setKV(tgMessage.chatId, user.serialize());
-        dmhyTgBot.sendMessage(tgMessage.chatId, 'done!');
+        tgBot.sendMessage(tgMessage.chatId, 'done!');
     } else {
-        dmhyTgBot.sendMessage(tgMessage.chatId, 'No record!');
+        tgBot.sendMessage(tgMessage.chatId, 'No record!');
     }
 });
 
-dmhyTgBot.addCommand(/\/delsub(.+)/, async (tgMessage) => {
-    const user = await userdb.getEntity(tgMessage.chatId);
+tgBot.addCommand(/\/delsub(.+)/, async (tgMessage) => {
+    const { record: user } = await userdb.getEntity(tgMessage.chatId);
     const id = tgMessage.matchedText;
     if (user && id) {
         user.deleteSubscribe(id);
         await userdb.setKV(tgMessage.chatId, user.serialize());
-        dmhyTgBot.sendMessage(tgMessage.chatId, 'Done!');
+        tgBot.sendMessage(tgMessage.chatId, 'Done!');
     } else {
-        dmhyTgBot.sendMessage(tgMessage.chatId, 'No record!');
+        tgBot.sendMessage(tgMessage.chatId, 'No record!');
     }
 });
 
-dmhyTgBot.addCommand(/\/check$/, async (tgMessage) => {
-    const fetchedList = await cache.get();
-    const user = await userdb.getEntity(tgMessage.chatId);
-    const titles = await checkUserFetchedList(user, fetchedList);
-    if (!user || !titles.length) {
-        dmhyTgBot.sendMessage(tgMessage.chatId, 'No update!');
+tgBot.addCommand(/\/check$/, async (tgMessage) => {
+    const fetchedList = await cache.get([]);
+    const { record: user } = await userdb.getEntity(tgMessage.chatId);
+    if (user) {
+        const titles = await checkUserFetchedList(user, fetchedList);
+        if (titles.length) {
+            messagesSplit(titles).forEach((i) => tgBot.sendMessage(tgMessage.chatId, i, { parse_mode: 'Markdown' }));
+        }
         return;
     }
-    messagesSplit(titles)
-        .forEach(i => dmhyTgBot.sendMessage(tgMessage.chatId, i, {parse_mode: 'Markdown'}));
+    tgBot.sendMessage(tgMessage.chatId, 'No update!');
 });
 
-dmhyTgBot.addCommand(/.+/, async (tgMessage) => {
-    let msg = `
+tgBot.addCommand(/.+/, async (tgMessage) => {
+    const msg = `
     Available commands:
     /subs xxx
     /subs xxx,yyy
@@ -162,29 +173,26 @@ dmhyTgBot.addCommand(/.+/, async (tgMessage) => {
     /delsubs id1,id2
     /listsubs
     `;
-    dmhyTgBot.sendMessage(tgMessage.chatId, msg);
+    tgBot.sendMessage(tgMessage.chatId, msg);
 });
-
 
 // Setup schedule to check new updates for every 2 hours
 setInterval(async () => {
     try {
         logger.info('Schedule triggered');
-        const fetchedList = await cache.get();
+        const fetchedList = await cache.get([]);
         const recordSet = await userdb.scanKV();
 
         for (const record of recordSet) {
             const user = User.deserialize(record.value);
             const titles = await checkUserFetchedList(user, fetchedList);
             if (titles.length) {
-                messagesSplit(titles)
-                    .forEach(i => dmhyTgBot.sendMessage(user.chatId, i, {parse_mode: 'Markdown'}));
+                messagesSplit(titles).forEach((i) => tgBot.sendMessage(user.chatId, i, { parse_mode: 'Markdown' }));
             }
         }
         const nextTime = new Date();
         nextTime.setTime(nextTime.getTime() + 7200000);
         logger.info('Next schedule at ' + nextTime.toString());
-        global.gc && global.gc();
     } catch (e) {
         logger.error(e);
     }

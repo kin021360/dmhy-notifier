@@ -1,13 +1,11 @@
 /* eslint-disable import/order */
 import { Logger } from 'pino';
-import Parser from 'rss-parser';
+import Parser, { Item } from 'rss-parser';
 import { URL } from 'url';
-import util from 'util';
 
 import { logger as baseLogger } from 'src/logger';
 
-const parser = new Parser();
-parser.parseURL = util.promisify(parser.parseURL);
+const parser = new Parser<{ [key: string]: any }, Item>();
 
 export class RssService {
     public rssEndpoint: string;
@@ -18,7 +16,7 @@ export class RssService {
         this.logger = baseLogger.child({ source: loggerName });
     }
 
-    static setQuerystring(querystring: Record<string, string>, urlObject: URL) {
+    static setQuerystring(querystring: Record<string, string>, urlObject: URL): void {
         for (const key in querystring) {
             urlObject.searchParams.set(key, querystring[key]);
         }

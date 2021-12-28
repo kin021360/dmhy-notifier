@@ -1,5 +1,6 @@
 import crypto from 'crypto';
 
+import { RssResultItem } from 'src/entities/RssResultItem';
 import { isBig5, isMatch } from 'src/utils';
 
 export class Subscribe {
@@ -33,9 +34,9 @@ export class Subscribe {
         return this.preferredFansub.length > 0 && isMatch(title, this.preferredFansub);
     }
 
-    checkSatisfiedItems(items: Record<string, any>[]): Record<string, any>[] {
-        const satisfiedItems: Record<string, any>[] = [];
-        const satisfiedItemsInPreferredFansub: Record<string, any>[] = [];
+    checkSatisfiedItems(items: RssResultItem[]): RssResultItem[] {
+        const satisfiedItems: RssResultItem[] = [];
+        const satisfiedItemsInPreferredFansub: RssResultItem[] = [];
         items.forEach((item) => {
             const isSatisfy = this.isSatisfy(item.title);
             if (isSatisfy) {

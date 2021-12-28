@@ -9,11 +9,13 @@ export interface Kvp {
     value: string;
 }
 
-export class LeveldbAdapter {
+export class LeveldbAdapter<T> {
     private readonly db: LevelTTL;
+    private readonly deserializeFn: (x: string) => T;
 
-    constructor(dbPath: string) {
+    constructor(dbPath: string, deserializeFn: (x: string) => T = JSON.parse) {
         this.db = levelttl(levelup(leveldown(dbPath)));
+        this.deserializeFn = deserializeFn;
     }
 
     setKV(key: string | number, value: string, ttl?: number): Promise<void> {
@@ -28,18 +30,18 @@ export class LeveldbAdapter {
         return this.db
             .get(key.toString())
             .then((v) => ({ isExisted: true, record: String(v) }))
-            .catch(() => ({ isExisted: false, record: null }));
+            .catch(() => ({ isExisted: false }));
     }
 
-    async getEntity<T>(key: string | number, deserializeFn: (x: string) => T = JSON.parse): Promise<LeveldbResult<T>> {
+    async getEntity(key: string | number): Promise<LeveldbResult<T>> {
         const { isExisted, record } = await this.getV(key);
         if (isExisted && record) {
             return {
                 isExisted,
-                record: deserializeFn(record),
+                record: this.deserializeFn(record),
             };
         }
-        return { isExisted, record: null };
+        return { isExisted };
     }
 
     scanKV(limit = -1): Promise<Kvp[]> {
