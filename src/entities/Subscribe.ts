@@ -1,6 +1,6 @@
 import crypto from 'crypto';
 
-import { isBig5, isMatch } from 'src/utils/util';
+import { isBig5, isMatch } from 'src/utils';
 
 export class Subscribe {
     static fansubList = ['喵萌', '極影', '幻櫻', '豌豆', '千夏', '桜都', '悠哈璃羽', '动漫国', '動漫國', 'DHR'];
