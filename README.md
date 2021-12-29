@@ -11,26 +11,16 @@ It will check update for every two hours.
 Install the dependencies:
 
 ```bash
-npm install
+yarn install
 ```
 
 Start the program:
 
 ```bash
-npm start
+yarn start
 ```
 
-Set your **Telegram bot API token** to `tgBotToken` in `config.js`:
-
-```js
-const path = require('path');
-
-module.exports = {
-    tgBotToken: '', // Telegram bot API token
-    cachedbPath: path.resolve(__dirname, './leveldb/cachedb'),
-    userdbPath: path.resolve(__dirname, './leveldb/userdb')
-};
-```
+You may have to set your **Telegram bot API token** `tgBotToken` in env variables:
 
 ## Bot commands
 

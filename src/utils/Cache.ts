@@ -57,7 +57,7 @@ export class Cache<T> {
         if (this.lastUpdateTime && nowTime - this.lastUpdateTime.getTime() < this.ttl) return;
         if (!this.lock()) return;
         try {
-            logger.info('Locked!');
+            logger.debug('Locked!');
             const timeout = this.timer(this.executorTimeoutMs);
             const executor = this.updateExecutor();
             const result = await Promise.race([timeout, executor]);
@@ -66,7 +66,7 @@ export class Cache<T> {
                 this.cacheObject = result;
             }
         } finally {
-            logger.info('Released!');
+            logger.debug('Released!');
             this.release();
         }
     }
