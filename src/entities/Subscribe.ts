@@ -1,36 +1,42 @@
-const crypto = require('crypto');
-const {isMatch, isBig5} = require('../utils/util');
+import crypto from 'crypto';
 
-class Subscribe {
+import { RssResultItem } from 'src/entities/RssResultItem';
+import { isBig5, isMatch } from 'src/utils';
+
+export class Subscribe {
     static fansubList = ['喵萌', '極影', '幻櫻', '豌豆', '千夏', '桜都', '悠哈璃羽', '动漫国', '動漫國', 'DHR'];
 
-    constructor(searchName, preferredFansub = []) {
+    public searchName: string[];
+    public preferredFansub: string[];
+    public id: string;
+
+    constructor(searchName: string | string[], preferredFansub: string[] = []) {
         if (typeof searchName === 'string') searchName = searchName.split(',');
-        this.searchName = searchName.map(s => s.toLowerCase());
+        this.searchName = searchName.map((s) => s.toLowerCase());
         this.preferredFansub = preferredFansub;
         this.id = crypto.createHash('md5').update(this.searchName.toString()).digest('hex');
     }
 
-    serialize() {
+    serialize(): string {
         return JSON.stringify(this);
     }
 
-    static deserialize(jsonStr) {
-        const {searchName, preferredFansub} = JSON.parse(jsonStr);
+    static deserialize(jsonStr: string): Subscribe {
+        const { searchName, preferredFansub } = JSON.parse(jsonStr);
         return new Subscribe(searchName, preferredFansub);
     }
 
-    isSatisfy(title) {
+    isSatisfy(title: string): boolean {
         return isMatch(title, this.searchName) && isBig5(title);
     }
 
-    isInPreferredFansub(title) {
+    isInPreferredFansub(title: string): boolean {
         return this.preferredFansub.length > 0 && isMatch(title, this.preferredFansub);
     }
 
-    checkSatisfiedItems(items) {
-        const satisfiedItems = [];
-        const satisfiedItemsInPreferredFansub = [];
+    checkSatisfiedItems(items: RssResultItem[]): RssResultItem[] {
+        const satisfiedItems: RssResultItem[] = [];
+        const satisfiedItemsInPreferredFansub: RssResultItem[] = [];
         items.forEach((item) => {
             const isSatisfy = this.isSatisfy(item.title);
             if (isSatisfy) {
@@ -44,5 +50,3 @@ class Subscribe {
         return satisfiedItemsInPreferredFansub.length > 0 ? satisfiedItemsInPreferredFansub : satisfiedItems;
     }
 }
-
-module.exports = Subscribe;
