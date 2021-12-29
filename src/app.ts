@@ -49,13 +49,12 @@ const cache = new Cache(fetchAllServices, 900000);
 
 const checkUserFetchedList = async (user: User, fetchedList: RssResultItem[]) => {
     const titles: string[] = [];
-    if (!fetchedList) return titles;
     for (const subscribe of user.subscribeList) {
         const satisfiedItems = subscribe.checkSatisfiedItems(fetchedList);
         for (const satisfiedItem of satisfiedItems) {
-            const cacheKey = user.chatId + genMD5(satisfiedItem.title);
-            const exist = await cachedb.getV(cacheKey);
-            if (!exist) {
+            const cacheKey = user.chatId.toString() + genMD5(satisfiedItem.title);
+            const { isExisted } = await cachedb.getV(cacheKey);
+            if (!isExisted) {
                 let title = '';
                 title += `${escapeForTgMarkdown(satisfiedItem.title)} - *${satisfiedItem.pubDate}*\n`;
                 title += satisfiedItem.downloadLinks
