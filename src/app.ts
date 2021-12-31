@@ -154,8 +154,8 @@ tgBot.addCommand(/\/check$/, async (tgMessage) => {
         const titles = await checkUserFetchedList(user, fetchedList);
         if (titles.length) {
             messagesSplit(titles).forEach((i) => tgBot.sendMessage(tgMessage.chatId, i, { parse_mode: 'Markdown' }));
+            return;
         }
-        return;
     }
     tgBot.sendMessage(tgMessage.chatId, 'No update!');
 });
