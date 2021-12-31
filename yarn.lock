@@ -1667,11 +1667,6 @@ fast-safe-stringify@^2.0.7:
   resolved "https://registry.yarnpkg.com/fast-safe-stringify/-/fast-safe-stringify-2.1.1.tgz#c406a83b6e70d9e35ce3b30a81141df30aeba884"
   integrity sha512-W+KJc2dmILlPplD/H4K9l9LcAHAfPtP6BY84uVLXQ6Evcz9Lcg33Y2z1IVblT6xdY54PXYVHEv+0Wpq8Io6zkA==
 
-fastify-warning@^0.2.0:
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/fastify-warning/-/fastify-warning-0.2.0.tgz#e717776026a4493dc9a2befa44db6d17f618008f"
-  integrity sha512-s1EQguBw/9qtc1p/WTY4eq9WMRIACkj+HTcOIK1in4MV5aFaQC9ZCIt0dJ7pr5bIf4lPpHvAtP2ywpTNgs7hqw==
-
 fastq@^1.6.0:
   version "1.13.0"
   resolved "https://registry.yarnpkg.com/fastq/-/fastq-1.13.0.tgz#616760f88a7526bdfc596b7cab8c18938c36b98c"
@@ -2794,7 +2789,7 @@ pino-elasticsearch@6.2.0:
     readable-stream "^3.6.0"
     split2 "^3.1.1"
 
-pino-multi-stream@6.0.0:
+pino-multi-stream@^6.0.0:
   version "6.0.0"
   resolved "https://registry.yarnpkg.com/pino-multi-stream/-/pino-multi-stream-6.0.0.tgz#2116bca740cb5eb606f430b20fd480f4944b2b99"
   integrity sha512-oCuTtaDSUB5xK1S45r9oWE0Dj8RWdHVvaGTft5pO/rmzgIqQRkilf5Ooilz3uRm0IYj8sPRho3lVx48LCmXjvQ==
@@ -2823,22 +2818,6 @@ pino-std-serializers@^4.0.0:
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/pino-std-serializers/-/pino-std-serializers-4.0.0.tgz#1791ccd2539c091ae49ce9993205e2cd5dbba1e2"
   integrity sha512-cK0pekc1Kjy5w9V2/n+8MkZwusa6EyyxfeQCB799CQRhRt/CqYKiWs5adeu8Shve2ZNffvfC/7J64A2PJo1W/Q==
-
-pino@7.6.1:
-  version "7.6.1"
-  resolved "https://registry.yarnpkg.com/pino/-/pino-7.6.1.tgz#351fb705a86ccd68c873254762db6caab1d11037"
-  integrity sha512-elKmRwO2h3kamfFZmlBNgoZ8WKhKxbPuYOGXKEsPbIXqHnBU1M1haswvsUP9/iJ56Jo7vkqTu1RiU/r5Xtl8YA==
-  dependencies:
-    fast-redact "^3.0.0"
-    fastify-warning "^0.2.0"
-    on-exit-leak-free "^0.2.0"
-    pino-abstract-transport v0.5.0
-    pino-std-serializers "^4.0.0"
-    quick-format-unescaped "^4.0.3"
-    real-require "^0.1.0"
-    safe-stable-stringify "^2.1.0"
-    sonic-boom "^2.2.1"
-    thread-stream "^0.13.0"
 
 pino@^7.0.0:
   version "7.6.2"
