@@ -83,7 +83,7 @@ tgBot.addCommand(/\/subs ([^;]+)(?:;([^;]+)?)?/, async (tgMessage) => {
     const preferredFansub =
         tgMessage.matchedTexts.length > 2 && tgMessage.matchedTexts[2] === '@'
             ? Subscribe.fansubList
-            : tgMessage.matchedTexts[2].split(',');
+            : tgMessage.matchedTexts[2]?.split(',');
     if (user) {
         user.addSubscribe(new Subscribe(tgMessage.matchedText, preferredFansub));
     } else {
