@@ -6,22 +6,6 @@ on:
     types: [completed]
 
 jobs:
-  #  build:
-  #    name: 'Test & Lint'
-  #    runs-on: ubuntu-latest
-  #    strategy:
-  #      matrix:
-  #        node-version: [14.x]
-  #    steps:
-  #    - name: Checkout source
-  #      uses: actions/checkout@v2
-  #    - name: Use Node.js ${{ matrix.node-version }}
-  #      uses: actions/setup-node@v1
-  #      with:
-  #        node-version: ${{ matrix.node-version }}
-  #    - run: yarn install
-  #    - run: yarn lint
-  #    - run: yarn build
   docker_push:
     name: Docker image
     runs-on: ubuntu-latest
