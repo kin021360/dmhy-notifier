@@ -1,10 +1,8 @@
+# https://docs.github.com/en/actions/learn-github-actions/workflow-syntax-for-github-actions#onpull_requestpull_request_targetbranchesbranches-ignore
+
 name: Stage
 
 on: push
-
-#on:
-#  push:
-#    branches: [ '!master' ]
 
 jobs:
   build:

@@ -1,10 +1,6 @@
 name: Build and push Docker image to ghcr
 
 on:
-#  push:
-#    branches: [ master ]
-#  pull_request:
-#    branches: [ master ]
   workflow_run:
     workflows: ["Stage"]
     branches: [master]
