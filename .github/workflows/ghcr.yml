@@ -3,11 +3,13 @@ name: Build and push Docker image to ghcr
 on:
   workflow_run:
     workflows: ["StageX"]
-    types: [completed]
+    types:
+      - completed
 
 jobs:
   docker_push:
     name: Docker image
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout source
