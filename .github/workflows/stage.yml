@@ -1,9 +1,6 @@
-name: StageX
+name: Stage
 
 on: push
-#    branches: [ * ]
-#  pull_request:
-#    branches: [ master ]
 
 jobs:
   build:

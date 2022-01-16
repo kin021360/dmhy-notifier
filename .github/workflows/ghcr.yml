@@ -1,10 +1,14 @@
 name: Build and push Docker image to ghcr
 
 on:
-  workflow_run:
-    workflows: ["StageX"]
-    types:
-      - completed
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+#  workflow_run:
+#    workflows: ["Stage"]
+#    types:
+#      - completed
 
 jobs:
   docker_push:
