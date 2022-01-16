@@ -37,7 +37,8 @@ jobs:
         uses: docker/build-push-action@v2.7.0
         with:
           registry: ghcr.io
-          username: "kin021360"
+          push: true
+          username: kin021360
           password: ${{ secrets.PAT }}
           repository: kin021360/dmhy-notifier
-          tags: latest
+          tags: kin021360/dmhy-notifier:latest
