@@ -31,14 +31,19 @@ jobs:
     steps:
       - name: Checkout source
         uses: actions/checkout@v2
+
       - name: Step
         run: echo ${GITHUB_SHA::7}
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.PAT }}
+
       - name: Build and push Docker images
         uses: docker/build-push-action@v2.7.0
         with:
-          registry: ghcr.io
           push: true
-          username: kin021360
-          password: ${{ secrets.PAT }}
-          repository: kin021360/dmhy-notifier
-          tags: kin021360/dmhy-notifier:latest
+          tags: ghcr.io/kin021360/dmhy-notifier:latest
