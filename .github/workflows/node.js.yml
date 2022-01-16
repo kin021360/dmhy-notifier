@@ -1,7 +1,4 @@
-# This workflow will do a clean install of node dependencies, build the source code and run tests across different versions of node
-# For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
-
-name: Node.js CI
+name: Stage
 
 on: push
 #    branches: [ * ]
@@ -9,41 +6,19 @@ on: push
 #    branches: [ master ]
 
 jobs:
-#  build:
-#    name: 'Test & Lint'
-#    runs-on: ubuntu-latest
-#    strategy:
-#      matrix:
-#        node-version: [14.x]
-#    steps:
-#    - name: Checkout source
-#      uses: actions/checkout@v2
-#    - name: Use Node.js ${{ matrix.node-version }}
-#      uses: actions/setup-node@v1
-#      with:
-#        node-version: ${{ matrix.node-version }}
-#    - run: yarn install
-#    - run: yarn lint
-#    - run: yarn build
-  docker_push:
-    name: Docker image
+  build:
+    name: 'Test & Lint'
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [14.x]
     steps:
-      - name: Checkout source
-        uses: actions/checkout@v2
-
-      - name: Step
-        run: echo ${GITHUB_SHA::7}
-
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v1
-        with:
-          registry: ghcr.io
-          username: ${{ github.repository_owner }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Build and push Docker images
-        uses: docker/build-push-action@v2.7.0
-        with:
-          push: true
-          tags: ghcr.io/kin021360/dmhy-notifier:latest
+    - name: Checkout source
+      uses: actions/checkout@v2
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+    - run: yarn install
+    - run: yarn lint
+    - run: yarn build
