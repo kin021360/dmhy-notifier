@@ -16,8 +16,12 @@ jobs:
       - name: Checkout source
         uses: actions/checkout@v2
 
-      - name: Step
-        run: echo ${GITHUB_SHA::7}
+      # - name: Step
+      #   run: echo ${GITHUB_SHA::7}
+
+      - name: Set vars
+        id: vars
+        run: echo "::set-output name=sha7::$(echo ${GITHUB_SHA::7})"
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v1
@@ -30,4 +34,6 @@ jobs:
         uses: docker/build-push-action@v2.7.0
         with:
           push: true
-          tags: ghcr.io/kin021360/dmhy-notifier:latest
+          tags: |
+            ghcr.io/kin021360/dmhy-notifier:latest
+            ghcr.io/kin021360/dmhy-notifier:${{ steps.vars.outputs.sha7 }}
