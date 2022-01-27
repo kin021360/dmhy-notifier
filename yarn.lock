@@ -420,10 +420,10 @@
     "@types/level-errors" "*"
     "@types/node" "*"
 
-"@types/node-telegram-bot-api@^0.51.1":
-  version "0.51.4"
-  resolved "https://registry.yarnpkg.com/@types/node-telegram-bot-api/-/node-telegram-bot-api-0.51.4.tgz#9eec24da79ff549cdd29387b67ac4ba5ee4aee62"
-  integrity sha512-l9MTmTxRBbrcnvnYoQpSo17m7qmEUv6ToDGldb2OwROQp5L56D4U2jcBT46hJFhuTQ4AnUxVfabLmWZqtsFHXw==
+"@types/node-telegram-bot-api@^0.53.0":
+  version "0.53.6"
+  resolved "https://registry.yarnpkg.com/@types/node-telegram-bot-api/-/node-telegram-bot-api-0.53.6.tgz#d051646e6c5545c3792e0487f638606415cb80a2"
+  integrity sha512-FJfI+kJALcib0gU3WXiX0NmgDmecq4ynizOH/jfz8m1jTfNj2LUtDtR1APNIQscqMv9heLGUB7ht12BFzx/lgg==
   dependencies:
     "@types/node" "*"
     "@types/request" "*"
@@ -2570,10 +2570,10 @@ node-releases@^2.0.1:
   resolved "https://registry.yarnpkg.com/node-releases/-/node-releases-2.0.1.tgz#3d1d395f204f1f2f29a54358b9fb678765ad2fc5"
   integrity sha512-CqyzN6z7Q6aMeF/ktcMVTzhAHCEpf8SOarwpzpf8pNBY2k5/oM34UHldUwp8VKI7uxct2HxSRdJjBaZeESzcxA==
 
-node-telegram-bot-api@^0.51.0:
-  version "0.51.0"
-  resolved "https://registry.yarnpkg.com/node-telegram-bot-api/-/node-telegram-bot-api-0.51.0.tgz#b519304231d8c6391dafe70ae313a8100175ced8"
-  integrity sha512-4SYAHBOhm8beNm/Sj6jo67GLbjMKLXejU/gjeIGsPMB9BAap4+ZT9viZkq1xC3t+0JeyQHOMudPp/vwpbK04qA==
+node-telegram-bot-api@^0.56.0:
+  version "0.56.0"
+  resolved "https://registry.yarnpkg.com/node-telegram-bot-api/-/node-telegram-bot-api-0.56.0.tgz#caf653574ed30530e2855a038b4d806f65c48677"
+  integrity sha512-gKUlH/uUXdSJ++6y1Y16qEThZouecfl4twuPKe6V2BPFDDfom9j2QMlxfslPEjZPH2ZXlA1S/uoRCKtIjzuaLw==
   dependencies:
     array.prototype.findindex "^2.0.2"
     bl "^1.2.3"
