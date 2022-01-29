@@ -14,7 +14,6 @@ export class TgBot {
             polling: true,
             onlyFirstMatch: true,
         });
-        // this.initBot();
     }
 
     // initBot() {
@@ -39,11 +38,11 @@ export class TgBot {
     //     });
     // }
 
-    addCommand(regex: RegExp, func: (x: TgMessage) => void): void {
+    addCommand(regex: RegExp, fn: (x: TgMessage) => Promise<void> | void): void {
         this.bot.onText(regex, async (msg, match) => {
             try {
                 logger.info({ chatId: msg.chat.id, command: msg.text }, 'Received command');
-                func({
+                await fn({
                     chatId: msg.chat.id,
                     date: msg.date,
                     rawText: msg.text,
