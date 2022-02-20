@@ -12,7 +12,7 @@ export const isMatch = (testStr: string, conditions: string[]): boolean => {
 };
 
 export const isBig5 = (title: string): boolean => {
-    const conditions = ['big5', 'cht', '繁體', '繁体', '简繁', '繁简', '繁日', '日繁', '繁中'];
+    const conditions = ['big5', 'cht', '繁體', '繁体', '简繁', '繁简', '簡繁', '繁簡', '繁日', '日繁', '繁中'];
     return isMatch(title, conditions);
 };
 
