@@ -2570,7 +2570,7 @@ node-releases@^2.0.1:
   resolved "https://registry.yarnpkg.com/node-releases/-/node-releases-2.0.1.tgz#3d1d395f204f1f2f29a54358b9fb678765ad2fc5"
   integrity sha512-CqyzN6z7Q6aMeF/ktcMVTzhAHCEpf8SOarwpzpf8pNBY2k5/oM34UHldUwp8VKI7uxct2HxSRdJjBaZeESzcxA==
 
-node-telegram-bot-api@^0.56.0:
+node-telegram-bot-api@0.56.0:
   version "0.56.0"
   resolved "https://registry.yarnpkg.com/node-telegram-bot-api/-/node-telegram-bot-api-0.56.0.tgz#caf653574ed30530e2855a038b4d806f65c48677"
   integrity sha512-gKUlH/uUXdSJ++6y1Y16qEThZouecfl4twuPKe6V2BPFDDfom9j2QMlxfslPEjZPH2ZXlA1S/uoRCKtIjzuaLw==
@@ -2795,23 +2795,24 @@ pino-elasticsearch@6.2.0:
     readable-stream "^3.6.0"
     split2 "^3.1.1"
 
-pino-multi-stream@^6.0.0:
+pino-multi-stream@6.0.0:
   version "6.0.0"
   resolved "https://registry.yarnpkg.com/pino-multi-stream/-/pino-multi-stream-6.0.0.tgz#2116bca740cb5eb606f430b20fd480f4944b2b99"
   integrity sha512-oCuTtaDSUB5xK1S45r9oWE0Dj8RWdHVvaGTft5pO/rmzgIqQRkilf5Ooilz3uRm0IYj8sPRho3lVx48LCmXjvQ==
   dependencies:
     pino "^7.0.0"
 
-pino-pretty@7.3.0:
-  version "7.3.0"
-  resolved "https://registry.yarnpkg.com/pino-pretty/-/pino-pretty-7.3.0.tgz#277fdc2306a2f6d727a1127e7747d1c078efdd4b"
-  integrity sha512-HAhShJ2z2QzxXhYAn6XfwYpF13o1PQbjzSNA9q+30FAvhjOmeACit9lprhV/mCOw/8YFWSyyNk0YCq2EDYGYpw==
+pino-pretty@7.6.1:
+  version "7.6.1"
+  resolved "https://registry.yarnpkg.com/pino-pretty/-/pino-pretty-7.6.1.tgz#42d20611050ad80d619edaf132c6d81d40f81d98"
+  integrity sha512-H7N6ZYkiyrfwBGW9CSjx0uyO9Q2Lyt73881+OTYk8v3TiTdgN92QHrWlEq/LeWw5XtDP64jeSk3mnc6T+xX9/w==
   dependencies:
     args "^5.0.1"
     colorette "^2.0.7"
     dateformat "^4.6.3"
     fast-safe-stringify "^2.0.7"
     joycon "^3.1.1"
+    on-exit-leak-free "^0.2.0"
     pino-abstract-transport "^0.5.0"
     pump "^3.0.0"
     readable-stream "^3.6.0"
@@ -2825,7 +2826,7 @@ pino-std-serializers@^4.0.0:
   resolved "https://registry.yarnpkg.com/pino-std-serializers/-/pino-std-serializers-4.0.0.tgz#1791ccd2539c091ae49ce9993205e2cd5dbba1e2"
   integrity sha512-cK0pekc1Kjy5w9V2/n+8MkZwusa6EyyxfeQCB799CQRhRt/CqYKiWs5adeu8Shve2ZNffvfC/7J64A2PJo1W/Q==
 
-pino@^7.0.0:
+pino@7.6.2, pino@^7.0.0:
   version "7.6.2"
   resolved "https://registry.yarnpkg.com/pino/-/pino-7.6.2.tgz#73d09dcf13079fd0a2fa7e8648f715d5082e63d8"
   integrity sha512-GTzW+HHOzUTaPIyvK6tasky2jMXF1o3iw7Oc2ik7qFjcaexXfyn6ej72XwX4O+wuRyFCbp3oKpv00htrPddv5A==

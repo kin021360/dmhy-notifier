@@ -14,11 +14,11 @@
     "levelup": "5.1.1",
     "module-alias": "2.2.2",
     "moment-timezone": "0.5.34",
-    "node-telegram-bot-api": "^0.56.0",
-    "pino": "^7.0.0",
+    "node-telegram-bot-api": "0.56.0",
+    "pino": "7.6.2",
     "pino-elasticsearch": "6.2.0",
-    "pino-multi-stream": "^6.0.0",
-    "pino-pretty": "7.3.0",
+    "pino-multi-stream": "6.0.0",
+    "pino-pretty": "7.6.1",
     "rss-parser": "3.12.0"
   },
   "devDependencies": {
