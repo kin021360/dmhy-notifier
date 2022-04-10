@@ -2,10 +2,13 @@
   "extends": [
     "config:base"
   ],
+  "lockFileMaintenance": {
+    "enabled": true
+  },
   "packageRules": [
     {
-      "matchPackageNames": ["node"],
-      "allowedVersions": "=14"
+      "matchPackageNames": ["@types/node"],
+      "allowedVersions": ">=14"
     }
   ]
 }
