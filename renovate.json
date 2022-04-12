@@ -9,6 +9,10 @@
     {
       "matchPackageNames": ["@types/node"],
       "allowedVersions": "<16"
+    },
+    {
+      "matchPackageNames": ["node"],
+      "allowedVersions": "=14"
     }
   ]
 }
