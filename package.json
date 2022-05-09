@@ -15,7 +15,7 @@
     "module-alias": "2.2.2",
     "moment-timezone": "0.5.34",
     "node-telegram-bot-api": "0.57.0",
-    "pino": "7.6.2",
+    "pino": "7.11.0",
     "pino-elasticsearch": "6.2.0",
     "pino-multi-stream": "6.0.0",
     "pino-pretty": "7.6.1",
