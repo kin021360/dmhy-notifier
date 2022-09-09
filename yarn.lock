@@ -421,10 +421,19 @@
     "@types/abstract-leveldown" "*"
     "@types/node" "*"
 
-"@types/levelup@*", "@types/levelup@5.1.1":
+"@types/levelup@*":
   version "5.1.1"
   resolved "https://registry.yarnpkg.com/@types/levelup/-/levelup-5.1.1.tgz#1b3b16f68062f6a812ebcb9cfe9759fe1b4a93f2"
   integrity sha512-VITfjLp6apbz6IHxBb+8px455J+7KKWxY4mgbXlSWtiXJKiiYwnl0c6ViKrBp02SHadPxvTb5BUe44TzQmBpiQ==
+  dependencies:
+    "@types/abstract-leveldown" "*"
+    "@types/level-errors" "*"
+    "@types/node" "*"
+
+"@types/levelup@5.1.2":
+  version "5.1.2"
+  resolved "https://registry.yarnpkg.com/@types/levelup/-/levelup-5.1.2.tgz#3b987fe66c95871dc97e74f0bce5b2eb91140782"
+  integrity sha512-JhCKONvFg2rEbsyyCCRkiPF03tMV1NyBXER4iXKBemgjwS4+SF6HGNuL4cfq6ueM6Yc+4ZbwJnU/5v6q3ZziUQ==
   dependencies:
     "@types/abstract-leveldown" "*"
     "@types/level-errors" "*"

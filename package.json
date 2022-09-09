@@ -25,7 +25,7 @@
     "@trivago/prettier-plugin-sort-imports": "3.2.0",
     "@types/level-ttl": "3.1.2",
     "@types/leveldown": "4.0.3",
-    "@types/levelup": "5.1.1",
+    "@types/levelup": "5.1.2",
     "@types/node": "14.18.28",
     "@types/node-telegram-bot-api": "0.57.1",
     "@types/pino-multi-stream": "5.1.3",
