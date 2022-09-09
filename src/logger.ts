@@ -1,5 +1,5 @@
 import pino from 'pino';
-import pinoms from 'pino-multi-stream';
+import pretty from 'pino-pretty';
 
 import { esLogEndpoint, esLogIndex } from 'src/config';
 
@@ -8,30 +8,28 @@ const ecsFormat = require('@elastic/ecs-pino-format')();
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const pinoElastic = require('pino-elasticsearch');
 
-const prettyStream = pinoms.prettyStream({
-    prettyPrint: {
-        colorize: true,
-        translateTime: true,
-        hideObject: true,
-        messageKey: 'message',
-        messageFormat: (log, messageKey) => {
-            const pureObject = {
-                ...log,
-                application: undefined,
-                level: undefined,
-                time: undefined,
-                message: undefined,
-                ecs: undefined,
-                process: undefined,
-                host: undefined,
-            };
-            const pureObjectStr = JSON.stringify(pureObject);
-            return `${log[messageKey]}${pureObjectStr !== '{}' ? '\n' + pureObjectStr : ''}`;
-        },
+const prettyStream = pretty({
+    colorize: true,
+    translateTime: true,
+    hideObject: true,
+    messageKey: 'message',
+    messageFormat: (log, messageKey) => {
+        const pureObject = {
+            ...log,
+            application: undefined,
+            level: undefined,
+            time: undefined,
+            message: undefined,
+            ecs: undefined,
+            process: undefined,
+            host: undefined,
+        };
+        const pureObjectStr = JSON.stringify(pureObject);
+        return `${log[messageKey]}:${pureObjectStr !== '{}' ? '\n' + pureObjectStr : ''}`;
     },
 });
 
-const logStreams: pinoms.Streams = [{ level: 'debug', stream: prettyStream }];
+const logStreams: pino.StreamEntry[] = [{ level: 'debug', stream: prettyStream }];
 
 if (esLogEndpoint && esLogIndex) {
     const streamToElastic = pinoElastic({
@@ -61,7 +59,7 @@ const baseLogger = pino(
         level: 'debug',
         ...ecsFormat,
     },
-    pinoms.multistream(logStreams),
+    pino.multistream(logStreams),
 );
 
 export const logger = baseLogger.child({ application: 'dmhy-notifier' });
