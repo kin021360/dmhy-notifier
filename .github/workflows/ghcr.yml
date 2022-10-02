@@ -31,9 +31,11 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and push Docker images
-        uses: docker/build-push-action@v2.10.0
+        uses: docker/build-push-action@v2
         with:
           push: true
+          build-args: |
+            VERSION=${{ steps.vars.outputs.sha7 }}
           tags: |
             ghcr.io/kin021360/dmhy-notifier:latest
             ghcr.io/kin021360/dmhy-notifier:${{ steps.vars.outputs.sha7 }}

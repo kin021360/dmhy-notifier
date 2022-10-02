@@ -1,7 +1,7 @@
 import { LeveldbAdapter } from 'src/adapters/LeveldbAdapter';
 import { TgBot } from 'src/adapters/TgBot';
 import { DmhyRssService, MoeRssService } from 'src/adapters/rssServices';
-import { cachedbPath, magnetHelperLink, tgBotToken, userdbPath } from 'src/config';
+import { cachedbPath, magnetHelperLink, tgBotToken, userdbPath, version } from 'src/config';
 import { Subscribe, User } from 'src/entities';
 import { RssResultItem } from 'src/entities/RssResultItem';
 import { logger as baseLogger } from 'src/logger';
@@ -158,6 +158,10 @@ tgBot.addCommand(/\/check$/, async (tgMessage) => {
         }
     }
     tgBot.sendMessage(tgMessage.chatId, 'No update!');
+});
+
+tgBot.addCommand(/\/version$/, async (tgMessage) => {
+    tgBot.sendMessage(tgMessage.chatId, version);
 });
 
 tgBot.addCommand(/.+/, async (tgMessage) => {

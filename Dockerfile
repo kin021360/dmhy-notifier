@@ -20,5 +20,8 @@ COPY --from=built /home/$AppName/yarn.lock .
 COPY --from=built /home/$AppName/dist ./dist
 RUN yarn install --prod
 
+ARG VERSION=local
+ENV VERSION ${VERSION}
+
 # Execute command
 CMD yarn start
