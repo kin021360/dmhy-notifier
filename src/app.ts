@@ -102,8 +102,10 @@ tgBot.addCommand(/\/listsubs$/, async (tgMessage) => {
     }
 });
 
-tgBot.addCommand(/\/list$/, async (tgMessage) => {
+tgBot.addCommand(/\/list\s*(\d+)?$/, async (tgMessage) => {
+    const requestedPage = parseInt(tgMessage.matchedText, 10);
     const { record: user } = await userdb.getEntity(tgMessage.chatId);
+
     if (user) {
         const list = user.subscribeList.map((i, index) => {
             let msg = `${index + 1}.\n`;
@@ -114,10 +116,20 @@ tgBot.addCommand(/\/list$/, async (tgMessage) => {
             msg += `----------------\n`;
             return msg;
         });
-        await tgBot.sendMessage(tgMessage.chatId, `Total items: ${list.length}`);
-        for (const i of messagesSplit(list)) {
+
+        const pages = messagesSplit(list);
+
+        if (requestedPage > 0 && pages.length > 0) {
+            const targetPage = requestedPage <= pages.length ? requestedPage : pages.length;
+            await tgBot.sendMessage(tgMessage.chatId, pages[targetPage - 1]);
+            return;
+        }
+
+        for (const i of pages) {
             await tgBot.sendMessage(tgMessage.chatId, i);
         }
+
+        await tgBot.sendMessage(tgMessage.chatId, `Total items: ${list.length}`);
     } else {
         tgBot.sendMessage(tgMessage.chatId, 'No record!');
     }
