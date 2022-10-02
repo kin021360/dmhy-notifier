@@ -43,7 +43,7 @@ export const reduceMagnetQuerystring = (magnet: string, maxQuerystring = 22): st
     return magnet;
 };
 
-export const messagesSplit = (messageList: string[], eachMsgItems = 15): string[] =>
+export const messagesSplit = (messageList: string[], eachMsgItems = 10): string[] =>
     messageList.reduce((current, item, index) => {
         const msgIndex = Math.floor(index / eachMsgItems);
         let msg = current[msgIndex] || '';
