@@ -21,7 +21,7 @@
     "rss-parser": "3.12.0"
   },
   "devDependencies": {
-    "@trivago/prettier-plugin-sort-imports": "3.2.0",
+    "@trivago/prettier-plugin-sort-imports": "3.4.0",
     "@types/level-ttl": "3.1.2",
     "@types/leveldown": "4.0.3",
     "@types/levelup": "5.1.1",
