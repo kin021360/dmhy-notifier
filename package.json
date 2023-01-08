@@ -21,7 +21,7 @@
     "rss-parser": "3.12.0"
   },
   "devDependencies": {
-    "@trivago/prettier-plugin-sort-imports": "3.2.0",
+    "@trivago/prettier-plugin-sort-imports": "4.0.0",
     "@types/level-ttl": "3.1.2",
     "@types/leveldown": "4.0.3",
     "@types/levelup": "5.1.1",
@@ -35,7 +35,7 @@
     "prettier": "2.6.2",
     "shx": "0.3.4",
     "ts-node": "10.9.1",
-    "tsconfig-paths": "4.0.0",
+    "tsconfig-paths": "4.1.2",
     "typescript": "4.5.4"
   },
   "scripts": {
