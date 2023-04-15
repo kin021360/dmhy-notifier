@@ -11,7 +11,7 @@ RUN yarn install
 RUN yarn lint
 RUN yarn build
 
-FROM node:14-stretch-slim
+FROM node:16-stretch-slim
 ARG AppName
 WORKDIR /home/$AppName/
 
