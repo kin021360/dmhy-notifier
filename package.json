@@ -24,7 +24,7 @@
     "@trivago/prettier-plugin-sort-imports": "4.0.0",
     "@types/level-ttl": "3.1.2",
     "@types/leveldown": "4.0.3",
-    "@types/levelup": "5.1.2",
+    "@types/levelup": "5.1.4",
     "@types/node": "16.18.23",
     "@types/node-telegram-bot-api": "0.57.6",
     "@typescript-eslint/eslint-plugin": "5.48.0",
