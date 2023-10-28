@@ -195,25 +195,25 @@
   dependencies:
     "@elastic/ecs-helpers" "^1.1.0"
 
-"@elastic/elasticsearch@^8.2.1":
-  version "8.5.0"
-  resolved "https://registry.yarnpkg.com/@elastic/elasticsearch/-/elasticsearch-8.5.0.tgz#407aee0950a082ee76735a567f2571cf4301d4ea"
-  integrity sha512-iOgr/3zQi84WmPhAplnK2W13R89VXD2oc6WhlQmH3bARQwmI+De23ZJKBEn7bvuG/AHMAqasPXX7uJIiJa2MqQ==
+"@elastic/elasticsearch@^8.0.0":
+  version "8.10.0"
+  resolved "https://registry.yarnpkg.com/@elastic/elasticsearch/-/elasticsearch-8.10.0.tgz#48842b3358b8ea4d37d75cff29fdd37fdf0b2996"
+  integrity sha512-RIEyqz0D18bz/dK+wJltaak+7wKaxDELxuiwOJhuMrvbrBsYDFnEoTdP/TZ0YszHBgnRPGqBDBgH/FHNgHObiQ==
   dependencies:
-    "@elastic/transport" "^8.2.0"
+    "@elastic/transport" "^8.3.4"
     tslib "^2.4.0"
 
-"@elastic/transport@^8.2.0":
-  version "8.3.1"
-  resolved "https://registry.yarnpkg.com/@elastic/transport/-/transport-8.3.1.tgz#e7569d7df35b03108ea7aa886113800245faa17f"
-  integrity sha512-jv/Yp2VLvv5tSMEOF8iGrtL2YsYHbpf4s+nDsItxUTLFTzuJGpnsB/xBlfsoT2kAYEnWHiSJuqrbRcpXEI/SEQ==
+"@elastic/transport@^8.3.4":
+  version "8.3.4"
+  resolved "https://registry.yarnpkg.com/@elastic/transport/-/transport-8.3.4.tgz#43c852e848dc8502bbd7f23f2d61bd5665cded99"
+  integrity sha512-+0o8o74sbzu3BO7oOZiP9ycjzzdOt4QwmMEjFc1zfO7M0Fh7QX1xrpKqZbSd8vBwihXNlSq/EnMPfgD2uFEmFg==
   dependencies:
     debug "^4.3.4"
     hpagent "^1.0.0"
     ms "^2.1.3"
     secure-json-parse "^2.4.0"
     tslib "^2.4.0"
-    undici "^5.5.1"
+    undici "^5.22.1"
 
 "@eslint-community/eslint-utils@^4.2.0", "@eslint-community/eslint-utils@^4.4.0":
   version "4.4.0"
@@ -246,6 +246,11 @@
   version "8.52.0"
   resolved "https://registry.yarnpkg.com/@eslint/js/-/js-8.52.0.tgz#78fe5f117840f69dc4a353adf9b9cd926353378c"
   integrity sha512-mjZVbpaeMZludF2fsWLD0Z9gCref1Tk4i9+wddjRvpUNqqcndPkBD09N/Mapey0b3jaXbLm2kICwFv2E64QinA==
+
+"@fastify/busboy@^2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@fastify/busboy/-/busboy-2.0.0.tgz#f22824caff3ae506b18207bad4126dbc6ccdb6b8"
+  integrity sha512-JUFJad5lv7jxj926GPgymrWQxxjPYuJNiNjNMzqT+HiuP6Vl3dk5xzG+8sTX96np0ZAluvaMzPsjhHZ5rNuNQQ==
 
 "@humanwhocodes/config-array@^0.11.13":
   version "0.11.13"
@@ -837,13 +842,6 @@ buffer@^6.0.3:
   dependencies:
     base64-js "^1.3.1"
     ieee754 "^1.2.1"
-
-busboy@^1.6.0:
-  version "1.6.0"
-  resolved "https://registry.yarnpkg.com/busboy/-/busboy-1.6.0.tgz#966ea36a9502e43cdb9146962523b92f531f6893"
-  integrity sha512-8SFQbg/0hQ9xy3UNTB0YEnsNBbWfhf7RtnzpL7TkBiTBRfrQ9Fxcnz7VJsleJpyp6rVLvXiuORqjlHi5q+PYuA==
-  dependencies:
-    streamsearch "^1.1.0"
 
 call-bind@^1.0.0, call-bind@^1.0.2:
   version "1.0.2"
@@ -2386,12 +2384,12 @@ pino-abstract-transport@^1.0.0, pino-abstract-transport@v1.0.0:
     readable-stream "^4.0.0"
     split2 "^4.0.0"
 
-pino-elasticsearch@6.3.0:
-  version "6.3.0"
-  resolved "https://registry.yarnpkg.com/pino-elasticsearch/-/pino-elasticsearch-6.3.0.tgz#76e608d8d13b2b9165e3639a64598a60f9897c52"
-  integrity sha512-ZRKifhtzfxwj0IG6c45P8ip2Nd00U8qr+9OFW7kD40ckNQTa/Lr7loN/PHYRCler9wNHPLTAo6CefinUjNmUFw==
+pino-elasticsearch@7.0.0:
+  version "7.0.0"
+  resolved "https://registry.yarnpkg.com/pino-elasticsearch/-/pino-elasticsearch-7.0.0.tgz#66cc9e752dcdc33f89a45388cfd55637ee4e48b0"
+  integrity sha512-CBHXm9iAcmM+n/NyXHa6F6Mv0+K65vCoeXQkyNaSD2JON2/oOFtY6Ho288bUYHSLDRz9awnHl+3zZpfbo8n4+Q==
   dependencies:
-    "@elastic/elasticsearch" "^8.2.1"
+    "@elastic/elasticsearch" "^8.0.0"
     minimist "^1.2.5"
     pump "^3.0.0"
     split2 "^4.0.0"
@@ -2817,11 +2815,6 @@ stealthy-require@^1.1.1:
   resolved "https://registry.yarnpkg.com/stealthy-require/-/stealthy-require-1.1.1.tgz#35b09875b4ff49f26a777e509b3090a3226bf24b"
   integrity sha512-ZnWpYnYugiOVEY5GkcuJK1io5V8QmNYChG62gSit9pQVGErXtrKuPC55ITaVSukmMta5qpMU7vqLt2Lnni4f/g==
 
-streamsearch@^1.1.0:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/streamsearch/-/streamsearch-1.1.0.tgz#404dd1e2247ca94af554e841a8ef0eaa238da764"
-  integrity sha512-Mcc5wHehp9aXz1ax6bZUyY5afg9u2rv5cqQI3mRrYkGC8rW2hM02jWuwjtL++LS5qinSyhj2QfLyNsuc+VsExg==
-
 string-similarity@^4.0.1:
   version "4.0.4"
   resolved "https://registry.yarnpkg.com/string-similarity/-/string-similarity-4.0.4.tgz#42d01ab0b34660ea8a018da8f56a3309bb8b2a5b"
@@ -3087,12 +3080,12 @@ unbox-primitive@^1.0.2:
     has-symbols "^1.0.3"
     which-boxed-primitive "^1.0.2"
 
-undici@^5.5.1:
-  version "5.21.2"
-  resolved "https://registry.yarnpkg.com/undici/-/undici-5.21.2.tgz#329f628aaea3f1539a28b9325dccc72097d29acd"
-  integrity sha512-f6pTQ9RF4DQtwoWSaC42P/NKlUjvezVvd9r155ohqkwFNRyBKM3f3pcty3ouusefNRyM25XhIQEbeQ46sZDJfQ==
+undici@^5.22.1:
+  version "5.27.0"
+  resolved "https://registry.yarnpkg.com/undici/-/undici-5.27.0.tgz#789f2e40ce982b5507899abc2c2ddeb2712b4554"
+  integrity sha512-l3ydWhlhOJzMVOYkymLykcRRXqbUaQriERtR70B9LzNkZ4bX52Fc8wbTDneMiwo8T+AemZXvXaTx+9o5ROxrXg==
   dependencies:
-    busboy "^1.6.0"
+    "@fastify/busboy" "^2.0.0"
 
 universalify@^0.2.0:
   version "0.2.0"
