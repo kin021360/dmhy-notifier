@@ -72,7 +72,7 @@ export class TgBot {
     sendPhoto(
         chatId: number,
         buffBase64: string | null,
-        option: Record<string, any> = {},
+        option: Record<string, unknown> & { caption?: string } = {},
     ): Promise<TelegramBot.Message> {
         if (buffBase64) {
             const imageBuff = Buffer.from(buffBase64, 'base64');

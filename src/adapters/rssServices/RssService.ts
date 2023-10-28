@@ -5,7 +5,7 @@ import { URL } from 'url';
 
 import { logger as baseLogger } from 'src/logger';
 
-const parser = new Parser<{ [key: string]: any }, Item>();
+const parser = new Parser<{ [key: string]: unknown }, Item>();
 
 export class RssService {
     public rssEndpoint: string;
