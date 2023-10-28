@@ -4,6 +4,8 @@ services:
     build:
       context: ./
       dockerfile: Dockerfile
+#    image: ghcr.io/kin021360/dmhy-notifier:latest
+#    pull_policy: always
 #    volumes:
 #      - /:/home/dmhy-notifier/leveldb
     environment:
