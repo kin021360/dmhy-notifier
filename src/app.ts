@@ -55,21 +55,19 @@ const checkUserFetchedList = async (user: User, fetchedList: RssResultItem[]) =>
             const cacheKey = user.chatId.toString() + genMD5(satisfiedItem.title);
             const { isExisted } = await cachedb.getV(cacheKey);
             if (!isExisted) {
-                let title = '';
-                title += `${escapeForTgMarkdown(satisfiedItem.title)} - *${satisfiedItem.pubDate}*\n`;
-                title += satisfiedItem.downloadLinks
-                    .map((i) => {
-                        let str = `*${i.source}:*\n- ${escapeForTgMarkdown(i.link)}`;
-                        if (magnetHelperLink && i.magnet) {
-                            const shorterMagnet = reduceMagnetQuerystring(i.magnet);
-                            str += `\n- [Magnet link](${magnetHelperLink}#${encodeURIComponent(
-                                ZlibHelper.zip(shorterMagnet.replace('magnet:?', '')),
-                            )})`;
-                        }
-                        return str;
-                    })
-                    .join('\n');
-                title += '\n';
+                let title = `${escapeForTgMarkdown(satisfiedItem.title)} - *${satisfiedItem.pubDate}*\n`;
+                title += `Subscr. id: *${subscribe.id}*\n`;
+
+                const dl =
+                    satisfiedItem.downloadLinks.find((d) => d.source === 'Dmhy') ?? satisfiedItem.downloadLinks[0];
+                title += `- ${escapeForTgMarkdown(dl.link)}\n`;
+                if (magnetHelperLink && dl.magnet) {
+                    const shorterMagnet = reduceMagnetQuerystring(dl.magnet);
+                    title += `- [Magnet link](${magnetHelperLink}#${encodeURIComponent(
+                        ZlibHelper.zip(shorterMagnet.replace('magnet:?', '')),
+                    )})\n`;
+                }
+
                 titles.push(title);
                 await cachedb.setKV(cacheKey, 'true', 86400000);
             }
