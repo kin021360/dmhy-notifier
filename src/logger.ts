@@ -3,9 +3,9 @@ import pretty from 'pino-pretty';
 
 import { esLogEndpoint, esLogIndex } from 'src/config';
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const ecsFormat = require('@elastic/ecs-pino-format')();
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const pinoElastic = require('pino-elasticsearch');
 
 const prettyStream = pretty({
