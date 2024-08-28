@@ -23,7 +23,7 @@
   "devDependencies": {
     "@trivago/prettier-plugin-sort-imports": "4.2.1",
     "@types/level-ttl": "3.1.4",
-    "@types/leveldown": "4.0.5",
+    "@types/leveldown": "4.0.6",
     "@types/levelup": "5.1.4",
     "@types/node": "16",
     "@types/node-telegram-bot-api": "0.64.6",

@@ -420,10 +420,10 @@
     "@types/abstract-leveldown" "*"
     "@types/levelup" "*"
 
-"@types/leveldown@4.0.5":
-  version "4.0.5"
-  resolved "https://registry.yarnpkg.com/@types/leveldown/-/leveldown-4.0.5.tgz#f98e6dd84c8ee14cb75ddb2cb729bb4fb57ddb5a"
-  integrity sha512-Nx/NaeGEKUyvt3FyKqG2XEamXZyLthi0MGUHEFRDMqJrQ08hpfnw/sPSlK0o+EXu1ay5zN+UvWAi3kKaBy3cdA==
+"@types/leveldown@4.0.6":
+  version "4.0.6"
+  resolved "https://registry.yarnpkg.com/@types/leveldown/-/leveldown-4.0.6.tgz#ecf4c2f929880ea8f52be1414196fac513e21dc7"
+  integrity sha512-AQ3vqW1j5aQ3U6A22e/k1WrZHHIewvGrBmq4zRxS9fRDpqTe3HoD+F11nEV+8zStfEbGHzzvk8dHF/4JEXmZnQ==
   dependencies:
     "@types/abstract-leveldown" "*"
     "@types/node" "*"
