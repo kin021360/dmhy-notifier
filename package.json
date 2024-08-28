@@ -17,7 +17,7 @@
     "node-telegram-bot-api": "0.65.1",
     "pino": "8.8.0",
     "pino-elasticsearch": "6.3.0",
-    "pino-pretty": "9.1.1",
+    "pino-pretty": "9.4.1",
     "rss-parser": "3.13.0"
   },
   "devDependencies": {
