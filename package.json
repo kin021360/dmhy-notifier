@@ -26,7 +26,7 @@
     "@types/leveldown": "4.0.5",
     "@types/levelup": "5.1.4",
     "@types/node": "16",
-    "@types/node-telegram-bot-api": "0.64.6",
+    "@types/node-telegram-bot-api": "0.64.13",
     "@typescript-eslint/eslint-plugin": "8.0.1",
     "@typescript-eslint/parser": "8.0.1",
     "eslint": "8.57.0",
