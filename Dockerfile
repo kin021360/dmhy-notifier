@@ -1,6 +1,6 @@
 ARG AppName=dmhy-notifier
 
-FROM node:24-slim AS built
+FROM node:24-trixie-slim AS built
 ARG AppName
 WORKDIR /home/$AppName/
 
@@ -11,7 +11,7 @@ RUN yarn install
 RUN yarn lint
 RUN yarn build
 
-FROM node:24-slim
+FROM node:24-trixie-slim
 ARG AppName
 WORKDIR /home/$AppName/
 
