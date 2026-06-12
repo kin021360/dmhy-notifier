@@ -379,10 +379,10 @@
     "@types/level-errors" "*"
     "@types/node" "*"
 
-"@types/node-telegram-bot-api@0.64.13":
-  version "0.64.13"
-  resolved "https://registry.yarnpkg.com/@types/node-telegram-bot-api/-/node-telegram-bot-api-0.64.13.tgz#41adc5089ead8093af0ed5ecc68f05a63cd4ec81"
-  integrity sha512-/d3sYpZq4sDwKWAm9XsIsb8MclclJ1yPXZC7uAzZRrJIFY8yg/63oNrLf9CBTlaS/XGR1N66BwibfJQGiWVsqg==
+"@types/node-telegram-bot-api@0.64.15":
+  version "0.64.15"
+  resolved "https://registry.yarnpkg.com/@types/node-telegram-bot-api/-/node-telegram-bot-api-0.64.15.tgz#6ef66af93a11d878efa9fef40bbac49cff0c7748"
+  integrity sha512-Ac1ZgSSHcO6P++7dsLSm3tjzInDLE0WrDTXHoUPKn/sUfDyR3f+IDtIUaSp/kLu+gn/jplGgGDY5CD95BEVk+g==
   dependencies:
     "@types/node" "*"
     "@types/request" "*"
